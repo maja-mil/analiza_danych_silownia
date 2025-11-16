@@ -1,0 +1,81 @@
+---
+title: "Analiza danych - siłownia"
+author: "Oliwia Kolendowska, Magdalena Łuciw, Maja Milewczyk"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    self_contained: true
+    default_style: "light"
+    downcute_theme: "sky"
+---
+
+```{r setup, include=FALSE}
+## Global options
+knitr::opts_chunk$set(cache = TRUE)
+library(tidyverse)
+dane <- read_csv("dane/silownia_new.csv")
+```
+
+# Wstęp
+
+Celem projektu zespołowego realizowanego w roku akademickim 2025/2026 jest analiza danych dotyczących aktywności użytkowników siłowni, obejmująca zarówno ich charakterystyki demograficzne, jak i wskaźniki związane z wydajnością treningową. Projekt ma na celu zrozumienie, jakie czynniki wpływają na efektywność ćwiczeń oraz jakie wzorce zachowań można zaobserwować wśród osób regularnie korzystających z siłowni.
+
+## Opis danych
+
+W projekcie wykorzystujemy zbiór danych obejmujący 973 rekordy dotyczące członków siłowni. Każdy wpis zawiera zestaw informacji demograficznych, fizjologicznych oraz dotyczących nawyków treningowych. Dane pozwalają analizować zarówno podstawowe parametry zdrowotne, jak i bardziej zaawansowane wskaźniki wydajności.
+
+Najważniejsze zmienne w zbiorze:
+
+**Wiek** – wiek użytkownika siłowni w latach.
+
+**Płeć** – mężczyzna lub kobieta.
+
+**Waga** (kg) – masa ciała w kilogramach.
+
+**Wzrost** (m) – wzrost użytkownika w metrach.
+
+**Max_BPM** – maksymalne tętno zanotowane podczas sesji treningowej.
+
+**Avg_BPM** – średnie tętno podczas treningu.
+
+**Resting_BPM** – tętno spoczynkowe przed rozpoczęciem ćwiczeń.
+
+**Session_Duration** (h) – czas trwania sesji treningowej wyrażony w godzinach.
+
+**Calories_Burned** – liczba kalorii spalonych w trakcie treningu.
+
+**Workout_Type** – rodzaj aktywności (np. kardio, trening siłowy, joga, HIIT).
+
+**Fat_Percentage** – procent tkanki tłuszczowej.
+
+**Water_Intake** (litry) – ilość wody wypitej w ciągu dnia treningowego.
+
+**Workout_Frequency** (dni/tydzień) – ile dni w tygodniu użytkownik ćwiczy.
+
+**Experience_Level** – poziom doświadczenia treningowego (1 – początkujący, 2 – średniozaawansowany, 3 – zaawansowany).
+
+**BMI** – wskaźnik masy ciała oparty na wzroście i wadze.
+
+Zakres danych umożliwia analizę zależności pomiędzy cechami fizycznymi, stylem treningów i nawykami a realnymi wynikami osiąganymi podczas ćwiczeń.
+
+### Pytania badawcze
+
+**1.** Jakie zmienne mają największy wpływ na liczbę spalonych kalorii (Calories_Burned)?
+
+**2.** Czy czas trwania treningu (Session_Duration) jest powiązany ze średnim tętnem (Avg_BPM) oraz liczbą spalonych kalorii?
+
+**3.** Czy rodzaj treningu (Workout_Type) wpływa na średnie tętno użytkowników i liczbę spalonych kalorii?
+
+**4.** Czy poziom doświadczenia (Experience_Level) wiąże się z większą wydajnością treningową (np. wyższym Calories_Burned lub niższym Avg_BPM)?
+
+**5.** Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?
+
+**6.** Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz w liczbie spalonych kalorii?
+
+**7.** Czy częstotliwość ćwiczeń w tygodniu (Workout_Frequency) wpływa na wskaźniki zdrowotne, takie jak BMI czy Resting_BPM?
+
+**8.** Czy w zbiorze danych można wyróżnić wyraźne grupy (klastry) użytkowników o podobnych parametrach fizycznych i treningowych?
+
+**9.** Które zmienne najbardziej wpływają na średnie tętno podczas treningu (Avg_BPM)?
+
+**10.** Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?
