@@ -6,7 +6,7 @@ output:
   rmdformats::downcute:
     self_contained: true
     default_style: "light"
-    downcute_theme: "sky"
+    downcute_theme: "default"
 ---
 
 ```{r setup, include=FALSE}
@@ -79,3 +79,4 @@ Zakres danych umożliwia analizę zależności pomiędzy cechami fizycznymi, sty
 **9.** Które zmienne najbardziej wpływają na średnie tętno podczas treningu (Avg_BPM)?
 
 **10.** Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?
+
