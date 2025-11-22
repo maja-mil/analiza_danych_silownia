@@ -80,9 +80,7 @@ Zakres danych umożliwia analizę zależności pomiędzy cechami fizycznymi, sty
 
 **10.** Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?
 
-
-# 2. Porządkowanie i czyszczenie danych 
-
+# 2. Porządkowanie i czyszczenie danych
 
 # 2.1 Braki danych
 
@@ -98,14 +96,26 @@ procent
 W danych znajduje się 80% kompletnych wartości.
 
 ```{r}
+install.packages("VIM")
+library(VIM)
+VIM::aggr(dane_imp, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(dane_imp), cex.axis=.7, gap=3, ylab=c("Procent braków danych","Wzorzec braków danych"))
+```
+
+```{r}
 naniar::vis_miss(dane)
 ```
 
-
 ## Wzorzec braków danych
+
 ```{r}
 install.packages("finalfit")
 library(finalfit)
 missing_pattern(dane)
 ```
 
+### Imputacje danych
+```{r}
+dane$BMI <- dane$`Weight (kg)`/dane$`Height (m)`^2
+dane_imp <- hotdeck(dane)
+naniar::prop_miss(dane_imp)
+```
