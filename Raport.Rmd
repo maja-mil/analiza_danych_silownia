@@ -80,3 +80,32 @@ Zakres danych umożliwia analizę zależności pomiędzy cechami fizycznymi, sty
 
 **10.** Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?
 
+
+# 2. Porządkowanie i czyszczenie danych 
+
+
+# 2.1 Braki danych
+
+```{r}
+install.packages("naniar")
+install.packages("vars")
+library(vars)
+library(naniar)
+procent <- prop_complete_var(dane)*100
+procent
+```
+
+W danych znajduje się 80% kompletnych wartości.
+
+```{r}
+naniar::vis_miss(dane)
+```
+
+
+## Wzorzec braków danych
+```{r}
+install.packages("finalfit")
+library(finalfit)
+missing_pattern(dane)
+```
+
