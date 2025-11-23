@@ -114,6 +114,7 @@ missing_pattern(dane)
 ```
 
 ### Imputacje danych
+
 ```{r}
 dane$BMI <- dane$`Weight (kg)`/dane$`Height (m)`^2
 dane_imp <- hotdeck(dane)
