@@ -93,17 +93,76 @@ procent <- prop_complete_var(dane)*100
 procent
 ```
 
-W danych znajduje się 80% kompletnych wartości.
-
 ```{r}
 install.packages("VIM")
 library(VIM)
 VIM::aggr(dane_imp, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(dane_imp), cex.axis=.7, gap=3, ylab=c("Procent braków danych","Wzorzec braków danych"))
 ```
+W danych znajduje się 80% kompletnych wartości. 
 
 ```{r}
 naniar::vis_miss(dane)
-```
+```# 2.2 Walidacja danych
+
+## Reguły 
+
+```{r}
+
+dane$rec_id <- sprintf("%03d", 1:nrow(dane))
+
+
+rules <- validator(
+# 1. Wiek
+Age >= 10,
+Age <= 140,
+
+# 2. Płeć
+Gender %in% c("Male", "Female"),
+
+# 3. Masa i wzrost
+`Weight (kg)` >= 30,
+`Weight (kg)` <= 250,
+`Height (m)` >= 1.00,
+`Height (m)` <= 2.50,
+
+# 4. Spójność tętna
+Resting_BPM >= 30,
+Resting_BPM <= 120,
+Max_BPM >= 100,
+Max_BPM <= 220,
+Avg_BPM > Resting_BPM,
+Avg_BPM < Max_BPM,
+
+# 5. Czas sesji
+`Session_Duration (hours)` > 0,
+
+# 6. Kalorie 
+Calories_Burned > 0,
+  
+# 7. Dopuszczalne typy treningu (Workout_Type)
+Workout_Type %in% c("Cardio", "Strength", "Yoga", "HIIT"),
+
+# 8. Zakres zawartości tkanki tłuszczowej (Fat_Percentage)
+Fat_Percentage >= 0,
+Fat_Percentage <= 70,
+
+# 9. Zakres spożycia wody (Water_Intake (liters))
+`Water_Intake (liters)` > 0,
+
+# 10. Częstotliwość treningów w tygodniu (Workout_Frequency (days/week))
+`Workout_Frequency (days/week)` >= 1,
+`Workout_Frequency (days/week)` <= 7,
+
+# 11. Poziom doświadczenia (Experience_Level)
+Experience_Level %in% c(1, 2, 3),
+
+# 12. Zakres BMI
+  BMI >= 10,
+  BMI <= 60,
+
+# 13. Spójność BMI z masą i wzrostem
+abs(BMI - `Weight (kg)` / (`Height (m)`^2)) <= 0.01
+
 
 ## Wzorzec braków danych
 
@@ -120,3 +179,4 @@ dane$BMI <- dane$`Weight (kg)`/dane$`Height (m)`^2
 dane_imp <- hotdeck(dane)
 naniar::prop_miss(dane_imp)
 ```
+
