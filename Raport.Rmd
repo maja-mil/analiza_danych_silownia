@@ -102,7 +102,8 @@ W danych znajduje się 80% kompletnych wartości.
 
 ```{r}
 naniar::vis_miss(dane)
-```# 2.2 Walidacja danych
+```
+# 2.2 Walidacja danych
 
 ## Reguły 
 
@@ -110,7 +111,7 @@ naniar::vis_miss(dane)
 
 dane$rec_id <- sprintf("%03d", 1:nrow(dane))
 
-
+library(validate)
 rules <- validator(
 # 1. Wiek
 Age >= 10,
@@ -161,7 +162,13 @@ Experience_Level %in% c(1, 2, 3),
   BMI <= 60,
 
 # 13. Spójność BMI z masą i wzrostem
-abs(BMI - `Weight (kg)` / (`Height (m)`^2)) <= 0.01
+abs(BMI - `Weight (kg)` / (`Height (m)`^2)) <= 0.01)
+
+cf <- confront(dane, rules, key = "rec_id")
+summary(cf)
+barplot(cf, main = "dane")
+
+```
 
 
 ## Wzorzec braków danych
