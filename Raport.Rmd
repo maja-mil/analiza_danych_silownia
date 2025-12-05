@@ -194,6 +194,12 @@ dane_imp[bpm_err, c("Age", "Gender", "Resting_BPM", "Avg_BPM", "Max_BPM")]
 # korekta: ustawiamy Max_BPM o 1 uderzenie/minutę wyżej niż Avg_BPM
 dane_imp$Max_BPM[bpm_err] <- dane_imp$Avg_BPM[bpm_err] + 1
 
+# Walidacja danych po poprawkach
+dane_imp$rec_id <- sprintf("%03d", 1:nrow(dane_imp))
+cf <- confront(dane_imp, rules, key = "rec_id")
+summary(cf)
+barplot(cf, main = "dane_imp_po_poprawkach")
+
 ```
 
 
