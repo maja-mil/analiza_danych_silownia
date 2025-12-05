@@ -185,6 +185,15 @@ cf <- confront(dane, rules, key = "rec_id")
 summary(cf)
 barplot(cf, main = "dane")
 
+# Identyfikacja rekordów niespełniających reguły Avg_BPM < Max_BPM
+bpm_err <- which(dane_imp$Avg_BPM >= dane_imp$Max_BPM)
+
+# Podgląd danych przed poprawą
+dane_imp[bpm_err, c("Age", "Gender", "Resting_BPM", "Avg_BPM", "Max_BPM")]
+
+# korekta: ustawiamy Max_BPM o 1 uderzenie/minutę wyżej niż Avg_BPM
+dane_imp$Max_BPM[bpm_err] <- dane_imp$Avg_BPM[bpm_err] + 1
+
 ```
 
 
