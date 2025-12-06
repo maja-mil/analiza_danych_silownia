@@ -187,7 +187,18 @@ barplot(cf, main = "dane")
 
 # Identyfikacja rekordów niespełniających reguły Avg_BPM < Max_BPM
 bpm_err <- which(dane_imp$Avg_BPM >= dane_imp$Max_BPM)
+```
+## Naprawa danych
 
+Po uzupełnieniu braków danych i zastosowaniu reguł walidacyjnych sprawdziliśmy, czy w zbiorze nie pozostały wartości sprzeczne logicznie. Większość obserwacji spełniała przyjęte warunki dotyczące wieku, wzrostu, masy ciała, BMI, czasu trwania treningu czy spalonych kalorii.
+
+Jedyny problem dotyczył zmiennych opisujących tętno. W kilku rekordach średnie tętno podczas treningu (Avg_BPM) było równe lub nawet wyższe niż maksymalne zarejestrowane tętno (Max_BPM). Taka sytuacja jest nielogiczna, bo zgodnie z definicją to tętno maksymalne powinno być najwyższą wartością z całej sesji.
+
+Założyliśmy, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwilowego braku odczytu w momencie faktycznego maksimum), natomiast średnie tętno jest bardziej stabilne i wiarygodne. Dlatego zdecydowaliśmy się korygować wyłącznie Max_BPM. Dla wszystkich obserwacji, w których Avg_BPM było większe lub równe Max_BPM, zwiększyliśmy Max_BPM o 1 uderzenie na minutę względem wartości średniej. Zmiana ta jest bardzo niewielka, nie wpływa istotnie na rozkład zmiennej, a jednocześnie przywraca logiczną relację pomiędzy średnim i maksymalnym tętnem.
+
+Po wprowadzeniu tej poprawki ponownie uruchomiliśmy procedurę walidacji. Wszystkie reguły zostały spełnione, a w danych nie pozostały już obserwacje oznaczone jako błędne.
+
+```{r}
 # Podgląd danych przed poprawą
 dane_imp[bpm_err, c("Age", "Gender", "Resting_BPM", "Avg_BPM", "Max_BPM")]
 
@@ -201,13 +212,3 @@ summary(cf)
 barplot(cf, main = "dane_imp_po_poprawkach")
 
 ```
-
-## Naprawa danych
-
-Po uzupełnieniu braków danych i zastosowaniu reguł walidacyjnych sprawdziliśmy, czy w zbiorze nie pozostały wartości sprzeczne logicznie. Większość obserwacji spełniała przyjęte warunki dotyczące wieku, wzrostu, masy ciała, BMI, czasu trwania treningu czy spalonych kalorii.
-
-Jedyny problem dotyczył zmiennych opisujących tętno. W kilku rekordach średnie tętno podczas treningu (Avg_BPM) było równe lub nawet wyższe niż maksymalne zarejestrowane tętno (Max_BPM). Taka sytuacja jest nielogiczna, bo zgodnie z definicją to tętno maksymalne powinno być najwyższą wartością z całej sesji.
-
-Założyliśmy, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwilowego braku odczytu w momencie faktycznego maksimum), natomiast średnie tętno jest bardziej stabilne i wiarygodne. Dlatego zdecydowaliśmy się korygować wyłącznie Max_BPM. Dla wszystkich obserwacji, w których Avg_BPM było większe lub równe Max_BPM, zwiększyliśmy Max_BPM o 1 uderzenie na minutę względem wartości średniej. Zmiana ta jest bardzo niewielka, nie wpływa istotnie na rozkład zmiennej, a jednocześnie przywraca logiczną relację pomiędzy średnim i maksymalnym tętnem.
-
-Po wprowadzeniu tej poprawki ponownie uruchomiliśmy procedurę walidacji. Wszystkie reguły zostały spełnione, a w danych nie pozostały już obserwacje oznaczone jako błędne.
