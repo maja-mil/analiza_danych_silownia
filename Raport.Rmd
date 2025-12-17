@@ -98,7 +98,8 @@ install.packages("VIM")
 library(VIM)
 VIM::aggr(dane_imp, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(dane_imp), cex.axis=.7, gap=3, ylab=c("Procent braków danych","Wzorzec braków danych"))
 ```
-W danych znajduje się 80% kompletnych wartości. 
+
+W danych znajduje się 80% kompletnych wartości.
 
 ```{r}
 naniar::vis_miss(dane)
@@ -122,7 +123,7 @@ naniar::prop_miss(dane_imp)
 
 # Walidacja danych
 
-## Reguły 
+## Reguły
 
 ```{r}
 
@@ -188,6 +189,7 @@ barplot(cf, main = "dane")
 # Identyfikacja rekordów niespełniających reguły Avg_BPM < Max_BPM
 bpm_err <- which(dane_imp$Avg_BPM >= dane_imp$Max_BPM)
 ```
+
 ## Naprawa danych
 
 Po uzupełnieniu braków danych i zastosowaniu reguł walidacyjnych sprawdziliśmy, czy w zbiorze nie pozostały wartości sprzeczne logicznie. Większość obserwacji spełniała przyjęte warunki dotyczące wieku, wzrostu, masy ciała, BMI, czasu trwania treningu czy spalonych kalorii.
@@ -213,7 +215,7 @@ barplot(cf, main = "dane_imp_po_poprawkach")
 
 ```
 
-# Wizualizacja danych 
+# Wizualizacja danych
 
 ```{r}
 library(dplyr)
@@ -252,9 +254,7 @@ ggplot(dane_plot, aes(Session_Duration, Calories_Burned)) +
   theme_minimal()
 ```
 
-## Na wykresach (osobno dla każdego typu treningu) widoczna jest wyraźna dodatnia zależność między czasem trwania sesji a liczbą spalonych kalorii — wraz ze wzrostem Session_Duration rośnie Calories_Burned. Linie regresji w poszczególnych panelach mają podobne nachylenie, co sugeruje, że sam wpływ czasu na spalanie kalorii jest zbliżony niezależnie od rodzaju aktywności. Jednocześnie zauważalne są niewielkie różnice w poziomie spalania kalorii (rozrzut i położenie punktów), co może oznaczać, że typ treningu w pewnym stopniu wpływa na liczbę spalonych kalorii, ale głównym czynnikiem pozostaje czas trwania ćwiczeń.
-
-
+### Na wykresach (osobno dla każdego typu treningu) widoczna jest wyraźna dodatnia zależność między czasem trwania sesji a liczbą spalonych kalorii — wraz ze wzrostem Session_Duration rośnie Calories_Burned. Linie regresji w poszczególnych panelach mają podobne nachylenie, co sugeruje, że sam wpływ czasu na spalanie kalorii jest zbliżony niezależnie od rodzaju aktywności. Jednocześnie zauważalne są niewielkie różnice w poziomie spalania kalorii (rozrzut i położenie punktów), co może oznaczać, że typ treningu w pewnym stopniu wpływa na liczbę spalonych kalorii, ale głównym czynnikiem pozostaje czas trwania ćwiczeń.
 
 ## Pytanie 2: Czy wiek (Age) ma związek z tętnem spoczynkowym (Resting_BPM)?
 
@@ -269,7 +269,7 @@ ggplot(dane_plot, aes(cut(Age, breaks = seq(15, 65, 5), right = FALSE), Resting_
 
 ```
 
-## Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany Resting_BPM w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w Resting_BPM występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
+### Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany Resting_BPM w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w Resting_BPM występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
 
 ## Pytanie 3: Czy rodzaj treningu (Workout_Type) wpływa na średnie tętno użytkowników i liczbę spalonych kalorii?
 
@@ -294,4 +294,4 @@ ggplot(dane_plot, aes(Workout_Type, Calories_Burned)) +
 
 ```
 
-## Na wykresach porównano rozkład średniego tętna (Avg_BPM) oraz liczby spalonych kalorii (Calories_Burned) w zależności od typu treningu (Workout_Type). W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów (Cardio, HIIT, Strength, Yoga), co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na Avg_BPM i Calories_Burned, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
+### Na wykresach porównano rozkład średniego tętna (Avg_BPM) oraz liczby spalonych kalorii (Calories_Burned) w zależności od typu treningu (Workout_Type). W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów (Cardio, HIIT, Strength, Yoga), co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na Avg_BPM i Calories_Burned, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
