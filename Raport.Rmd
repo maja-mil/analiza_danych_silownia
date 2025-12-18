@@ -222,6 +222,7 @@ library(dplyr)
 library(ggplot2)
 library(tidyr)
 library(forcats)
+library(patchwork)
 
 dane_plot <- dane_imp %>%
 rename(
@@ -325,10 +326,81 @@ ggplot(dane_plot, aes(x = Experience_Level, y = Calories_Burned, fill = Experien
 
 ```{r}
 
+# Średnie tętno (Avf_BPM) wg płci
+
+ggplot(dane_plot, aes(x = Gender, y = Avg_BPM, fill = Gender)) +
+  geom_boxplot() +
+  labs(title = "Różnice w średnim tętnie między płciami",
+       x = "Płeć", y = "Avg_BPM") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Maksymalne tętno (Max_BPM) wg płci
+
+ggplot(dane_plot, aes(x = Gender, y = Max_BPM, fill = Gender)) +
+  geom_boxplot() +
+  labs(
+    title = "Różnice w Maksymalnym Tętnie (Max_BPM) między Płciami",
+    x = "Płeć",
+    y = "Maksymalne Tętno (Max_BPM)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# Spalone kalorie (Calories_Burned) wg płci
+
+ggplot(dane_plot, aes(x = Gender, y = Calories_Burned, fill = Gender)) +
+  geom_boxplot() +
+  labs(
+    title = "Różnice w Spalonych Kaloriach (Calories_Burned) między Płciami",
+    x = "Płeć",
+    y = "Spalone Kalorie (Calories_Burned)"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 ```
+
+### Wykresy pokazały, że zarówno przeciętna intensywność oraz maksymalna intensywność treningów, o któej mówi nam średnie i maksymalne tętno, nie ma istotnej różnicy pomiędzy kobietami a mężczyznami. Natomiast pomimo podobnych wartości w tętnach mężczyźni spalają więcej kalorii niżeli kobiety. Różnica może wynikać na przykład przez mase ciała bądź skład mięśniowy ciała. 
 
 ## Pytanie 6: Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?
 
 ```{r}
+dane_calc <- dane_plot %>%
+  mutate(
+    Efficiency = Calories_Burned / Session_Duration,
+    BMI_Group = cut(BMI, breaks = c(0, 18.5, 25, 30, 100), 
+                    labels = c("Niedowaga", "Norma", "Nadwaga", "Otyłość")),
+    Fat_Group = cut(Fat_Percentage, breaks = c(0, 15, 25, 100), 
+                    labels = c("Sportowa (<15%)", "Przeciętna", "Wysoka (>25%)"))
+  )
 
+p1 <- ggplot(dane_calc %>% filter(!is.na(BMI_Group)), 
+             aes(x = BMI_Group, y = Efficiency, fill = BMI_Group)) +
+  stat_summary(fun = "mean", geom = "bar") +
+  stat_summary(fun = "mean", geom = "text", 
+               aes(label = after_stat(round(y, 0))), vjust = -0.5) +
+  labs(title = "Efektywność wg BMI", x = "Grupa BMI", y = "Kcal / Godzinę") +
+  scale_fill_brewer(palette = "Blues") +
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  coord_cartesian(clip = "off")
+
+p2 <- ggplot(dane_calc %>% filter(!is.na(Fat_Group)), 
+             aes(x = Fat_Group, y = Efficiency, fill = Fat_Group)) +
+  stat_summary(fun = "mean", geom = "bar") +
+  stat_summary(fun = "mean", geom = "text", 
+               aes(label = after_stat(round(y, 0))), vjust = -0.5) +
+  labs(title = "Efektywność wg % Tłuszczu", x = "% Tłuszczu", y = "") +
+  scale_fill_brewer(palette = "Reds") +
+  theme_minimal() + 
+  theme(legend.position = "none") +
+  coord_cartesian(clip = "off")
+
+p1 + p2 + 
+  plot_annotation(
+    title = "Analiza efektywności treningu",
+    subtitle = "Średnie spalanie kalorii na godzinę w zależności od składu ciała"
+  )
 ```
+
+## Wnioski do pytania 6
