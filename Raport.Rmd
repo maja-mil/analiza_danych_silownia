@@ -295,3 +295,40 @@ ggplot(dane_plot, aes(Workout_Type, Calories_Burned)) +
 ```
 
 ### Na wykresach porównano rozkład średniego tętna (Avg_BPM) oraz liczby spalonych kalorii (Calories_Burned) w zależności od typu treningu (Workout_Type). W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów (Cardio, HIIT, Strength, Yoga), co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na Avg_BPM i Calories_Burned, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
+
+## Pytanie 4: Czy poziom doświadczenia (Experience_Level) wpływa na spalanie kalorii tak samo w każdym rodzaju treningu (Workout_Type)?
+
+```{r}
+
+ggplot(dane_plot, aes(x = Experience_Level, y = Calories_Burned, fill = Experience_Level)) +
+  stat_summary(fun = "mean", geom = "bar", width = 0.7) +
+  stat_summary(fun = "mean", geom = "text", 
+               aes(label = after_stat(round(y, 0))), 
+               vjust = -0.5, size = 3.5) +
+  facet_wrap(~ Workout_Type) +
+  coord_cartesian(clip = "off") +
+  labs(title = "Gdzie doświadczenie ma największe znaczenie?",
+       subtitle = "Średnie spalanie kalorii wg poziomu zaawansowania",
+       x = "Poziom doświadczenia", 
+       y = "Średnio spalone kalorie") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+
+```
+
+### Wykresy przedstawiają średnią ilość spalonych kalorii w zależności od poziomu doświadczenia w każdym typie tregingu. Na wykresach widać, że osoby zaawansowane spalają średnio 80% więcej kalorii niżeli osoby będące na poziomie podstawowym. Różnica w spalaniu z podziałem na typu treningów nie jest znacząca. Ciekawym jest fakt, że podczas uprawiania jogi ćwiczący spalają podobną ilość kalorii co podczas innych treningów, pomimo tego, że przyjęło się, że joga jest mniej wymagającym rodzajem aktywności. Najwyższa średnią wartość spalonych kalorii widać w grupie zaawansowanej treningu siłowego (1318 kcal), co wskazuje, że ten rodzaj aktywności jest najefektyniejszy dla osób, które chcą szybciej spalać kalorie.
+
+## Pytanie 5: Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii? 
+
+```{r}
+
+```
+
+## Pytanie 6: Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?
+
+```{r}
+
+```
