@@ -404,3 +404,116 @@ p1 + p2 +
 ```
 
 ## Wnioski do pytania 6
+
+## Pytanie 7 :Czy częstotliwość ćwiczeń w tygodniu (Workout_Frequency) wpływa na wskaźniki zdrowotne, takie jak BMI czy Resting_BPM?
+
+```{r}
+# 7a. Wpływ częstotliwości na BMI
+ggplot(dane_plot, aes(x = factor(Workout_Frequency), y = BMI, fill = factor(Workout_Frequency))) +
+  geom_boxplot(alpha = 0.6, color = "darkgrey") +
+  geom_jitter(width = 0.2, alpha = 0.2, size = 1) +
+  scale_fill_viridis_d(option = "mako", begin = 0.3, end = 0.8) +
+  labs(title = "Częstotliwość treningów a BMI",
+       subtitle = "Rozkład wskaźnika masy ciała względem liczby treningów w tygodniu",
+       x = "Liczba treningów w tygodniu",
+       y = "BMI",
+       fill = "Dni/Tydzień") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# 7b. Wpływ częstotliwości na Tętno Spoczynkowe (Resting_BPM)
+ggplot(dane_plot, aes(x = factor(Workout_Frequency), y = Resting_BPM, fill = factor(Workout_Frequency))) +
+  geom_boxplot(alpha = 0.6, color = "darkgrey") +
+  geom_jitter(width = 0.2, alpha = 0.2, size = 1) +
+  scale_fill_viridis_d(option = "rocket", begin = 0.3, end = 0.8) +
+  labs(title = "Częstotliwość treningów a tętno spoczynkowe",
+       subtitle = "Czy regularność treningów poprawia tętno spoczynkowe?",
+       x = "Liczba treningów w tygodniu",
+       y = "Resting_BPM (uderzenia/min)",
+       fill = "Dni/Tydzień") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+### Analiza obu wykresów wykazuje, że wysoka częstotliwość treningów sprzyja stabilizacji kluczowych parametrów zdrowotnych, choć ich mediany pozostają zbliżone we wszystkich grupach. W przypadku wskaźnika BMI oraz tętna spoczynkowego (Resting_BPM) obserwujemy, że osoby trenujące najczęściej (5 razy w tygodniu) charakteryzują się najbardziej przewidywalnymi wynikami – u tych użytkowników rozkład danych jest najwęższy, co oznacza eliminację wartości skrajnych, takich jak wysokie stopnie otyłości czy nietypowo wysokie tętno spoczynkowe. Choć mediana BMI dla wszystkich grup oscyluje w granicach normy (24–25), a tętno spoczynkowe utrzymuje się na stabilnym poziomie ok. 61–63 uderzeń na minutę, to właśnie u osób ćwiczących 5 dni w tygodniu odnotowano najniższe wartości środkowe tętna. Można zatem wnioskować, że regularność treningowa w badanym zbiorze działa przede wszystkim jako czynnik stabilizujący organizm, chroniąc przed wynikami odbiegającymi od normy, natomiast sam wpływ liczby dni treningowych na średnie obniżenie BMI czy tętna jest zauważalny, lecz umiarkowany.
+
+## Pytanie 8:Czy w zbiorze danych można wyróżnić wyraźne grupy (klastry) użytkowników o podobnych parametrach fizycznych i treningowych?
+
+```{r}
+library(ggplot2)
+library(dplyr)
+
+dane_do_klastrowania <- dane_plot %>% 
+  dplyr::select(BMI, Fat_Percentage)
+
+set.seed(123) # Stały punkt startowy, aby wyniki były zawsze takie same
+klastry <- kmeans(dane_do_klastrowania, centers = 3)
+
+dane_plot$Grupa <- as.factor(klastry$cluster)
+
+ggplot(dane_plot, aes(x = BMI, y = Fat_Percentage, color = Grupa)) +
+  geom_point(alpha = 0.6, size = 2.5) +
+  scale_color_brewer(palette = "Set1") +
+  labs(title = "Segmentacja użytkowników (Analiza skupień)",
+       subtitle = "Podział na 3 grupy na podstawie BMI oraz tkanki tłuszczowej",
+       x = "Wskaźnik BMI",
+       y = "Procent tkanki tłuszczowej (%)",
+       color = "Klaster (Grupa)") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+### Analiza obu parametrów fizycznych wykazuje, że algorytm klastrowania skutecznie wyodrębnił trzy grupy użytkowników o różnej charakterystyce budowy ciała. Wykres obrazuje silną, liniową zależność między BMI a procentem tkanki tłuszczowej, co pozwala na wyraźny podział populacji siłowni na segmenty. Grupa pierwsza skupia osoby o najniższych parametrach, reprezentujące sylwetki atletyczne lub osoby o niskiej masie ciała. Druga grupa to osoby o średnich, standardowych wartościach, natomiast trzecia grupa obejmuje użytkowników o wyższym BMI i poziomie tłuszczu, którzy mogą stanowić grupę docelową dla treningów redukcyjnych. Zastosowanie tej metody potwierdza, że parametry fizyczne są silnie ze sobą powiązane i pozwalają na automatyczne profilowanie klubowiczów bez konieczności ręcznego przypisywania ich do kategorii.
+
+## Pytanie 9:Które zmienne najbardziej wpływają na średnie tętno podczas treningu (Avg_BPM)?
+
+```{r}
+dane_kor <- dane_plot %>%
+  dplyr::select(Avg_BPM, Max_BPM, Age, Weight, Height, 
+                Session_Duration, Calories_Burned, 
+                Fat_Percentage, Water_Intake, Workout_Frequency, BMI)
+
+kor_wyniki <- as.data.frame(cor(dane_kor, use = "complete.obs")["Avg_BPM", ])
+colnames(kor_wyniki) <- "Korelacja"
+kor_wyniki$Zmienna <- rownames(kor_wyniki)
+kor_wyniki <- kor_wyniki %>%
+  filter(Zmienna != "Avg_BPM") %>%
+  arrange(desc(abs(Korelacja)))
+
+ggplot(kor_wyniki, aes(x = reorder(Zmienna, Korelacja), y = Korelacja, fill = Korelacja)) +
+  geom_bar(stat = "identity") +
+  coord_flip() + # Wykres poziomy dla lepszej czytelności nazw
+  scale_fill_gradient2(low = "#4575b4", mid = "#ffffbf", high = "#d73027", midpoint = 0) +
+  labs(title = "Czynniki wpływające na średnie tętno (Avg_BPM)",
+       subtitle = "Siła powiązania parametrów z intensywnością wysiłku",
+       x = "Parametr",
+       y = "Współczynnik korelacji") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+### Analiza współczynników korelacji wykazuje, że średnie tętno podczas treningu jest najsilniej powiązane z tętnem maksymalnym (Max_BPM) oraz liczbą spalonych kalorii (Calories_Burned), co potwierdza bezpośrednią zależność między intensywnością wysiłku a wydatkiem energetycznym organizmu. Wykres obrazuje, że parametry takie jak czas trwania sesji (Session_Duration) również wykazują dodatni związek z tętnem, sugerując, że dłuższe i bardziej intensywne treningi utrzymują serce na wyższych obrotach. Z kolei zmienne demograficzne i fizyczne, takie jak wiek (Age) czy BMI, wykazują znacznie słabszy lub wręcz nieistotny wpływ na średnie tętno w tym zbiorze danych, co pozwala wnioskować, że o intensywności pracy serca na siłowni decyduje przede wszystkim charakter i dynamika samego treningu, a nie cechy budowy ciała czy wiek użytkownika. Całość wyników sugeruje, że monitoring Avg_BPM jest najlepszym wskaźnikiem bieżącego zaangażowania organizmu, niezależnym od stałych parametrów fizjologicznych klubowicza.
+
+## Pytanie 10:Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?
+
+```{r}
+dane_grupy <- dane_plot %>%
+  mutate(Calorie_Group = cut(Calories_Burned, 
+                             breaks = seq(0, 2000, by = 250),
+                             labels = c("0-250", "251-500", "501-750", "751-1000", 
+                                        "1001-1250", "1251-1500", "1501-1750", "1751+"))) %>%
+  filter(!is.na(Calorie_Group)) %>%
+  group_by(Calorie_Group) %>%
+  summarise(Avg_Water = mean(Water_Intake, na.rm = TRUE),
+            n = n())
+ggplot(dane_grupy, aes(x = Calorie_Group, y = Avg_Water, fill = Avg_Water)) +
+  geom_bar(stat = "identity", color = "white", alpha = 0.8) +
+  geom_text(aes(label = round(Avg_Water, 2)), v_just = -0.5, size = 3.5) +
+  scale_fill_gradient(low = "#85c1e9", high = "#21618c") +
+  labs(title = "Średnie spożycie wody w zależności od spalonych kalorii",
+       subtitle = "Wyraźny trend: im większy wydatek energetyczny, tym więcej wypitej wody",
+       x = "Przedział spalonych kalorii (kcal)",
+       y = "Średnia ilość wody (litry)",
+       fill = "Litry") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+### Analiza wykresu kolumnowego wykazuje bezpośrednią i liniową zależność między wydajnością treningową a nawodnieniem, wskazując, że oba te parametry rosną niemal równolegle. Podział danych na konkretne przedziały energetyczne pozwolił wyeliminować indywidualne odchylenia i ukazać stały trend wzrostowy: podczas gdy osoby spalające do 500 kcal wypijają średnio około 2 litrów wody, w grupach o najwyższej wydajności (powyżej 1750 kcal) średnie spożycie płynów wyraźnie wzrasta, osiągając najwyższe wartości. Taki układ danych jednoznacznie potwierdza, że zapotrzebowanie na wodę jest ściśle skorelowane z objętością wykonanej pracy, co sugeruje, że wyższe spożycie płynów stanowi fizjologiczną konieczność przy sesjach o wysokim wydatku energetycznym.
