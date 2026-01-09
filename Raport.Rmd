@@ -215,6 +215,98 @@ barplot(cf, main = "dane_imp_po_poprawkach")
 
 ```
 
+# Analiza opisowa
+
+Poniżej przedstawiamy podstawową charakterystykę próby oraz statystyki opisowe dla zmiennych liczbowych i jakościowych na danych po imputacji i korekcie błędów.
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(patchwork)
+
+# Ujednolicenie nazw i etykiet do tabel i wykresów
+dane_desc <- dane_imp %>%
+  rename(
+    Weight = `Weight (kg)`,
+    Height = `Height (m)`,
+    Session_Duration = `Session_Duration (hours)`,
+    Water_Intake = `Water_Intake (liters)`,
+    Workout_Frequency = `Workout_Frequency (days/week)`
+  ) %>%
+  mutate(
+    Gender = factor(Gender,
+                    levels = c("Female", "Male"),
+                    labels = c("Kobieta", "Mężczyzna")),
+    Workout_Type = factor(Workout_Type,
+                          levels = c("Cardio", "Strength", "Yoga", "HIIT"),
+                          labels = c("Cardio", "Siłowy", "Joga", "HIIT")),
+    Experience_Level = factor(Experience_Level,
+                              levels = c(1, 2, 3),
+                              labels = c("Początkujący", "Średniozaawansowany", "Zaawansowany"))
+  )
+
+# Podstawowe informacje o danych
+
+tibble(
+Liczba_obserwacji = nrow(dane_desc),
+Liczba_zmiennych = ncol(dane_desc)
+)
+
+glimpse(dane_desc)
+
+```
+
+Podstawowe informacje o danych
+
+Zbiór danych po imputacji i korekcie błędów zawiera 973 obserwacje oraz 30 zmiennych. Wśród nich znajdują się zarówno zmienne opisujące użytkowników i trening (m.in. wiek, płeć, masa ciała, wzrost, wskaźniki tętna, czas sesji, spalone kalorie, typ treningu, poziom doświadczenia), jak i zmienne techniczne związane z imputacją braków danych. Zmienne z końcówką _imp (np. Age_imp, Workout_Type_imp) mają postać logiczną TRUE/FALSE i informują, czy dana wartość w danym wierszu została uzupełniona metodą imputacji.
+
+W analizie opisowej skupiamy się na zmiennych merytorycznych (charakteryzujących użytkowników i trening), natomiast zmienne _imp traktujemy pomocniczo – służą do kontroli procesu przygotowania danych, a nie do opisu badanej próby.
+
+Struktura danych wskazuje, że większość zmiennych ma charakter liczbowy (np. Age, Weight, BMI, Calories_Burned, Session_Duration, wskaźniki tętna), a część to zmienne jakościowe (kategoryczne), takie jak Gender, Workout_Type oraz Experience_Level, które zostały dodatkowo przekształcone na czytelne etykiety w języku polskim.
+
+```{r}
+# Statystyki opisowe zmiennych liczbowych
+
+opis_liczbowe <- dane_desc %>%
+  dplyr::select(dplyr::where(is.numeric)) %>%
+  tidyr::pivot_longer(cols = dplyr::everything(),
+                      names_to = "Zmienna",
+                      values_to = "Wartosc") %>%
+  dplyr::group_by(Zmienna) %>%
+  dplyr::summarise(
+    n = sum(!is.na(Wartosc)),
+    srednia = round(mean(Wartosc, na.rm = TRUE), 2),
+    odch_sd = round(sd(Wartosc, na.rm = TRUE), 2),
+    mediana = round(median(Wartosc, na.rm = TRUE), 2),
+    q1 = round(quantile(Wartosc, 0.25, na.rm = TRUE), 2),
+    q3 = round(quantile(Wartosc, 0.75, na.rm = TRUE), 2),
+    min = round(min(Wartosc, na.rm = TRUE), 2),
+    max = round(max(Wartosc, na.rm = TRUE), 2),
+    .groups = "drop"
+  )
+
+opis_liczbowe
+```
+
+Statystyki opisowe zmiennych liczbowych
+W tabeli zestawiono podstawowe miary położenia i zróżnicowania (średnia, odchylenie standardowe, mediana, kwartyle oraz wartości minimalne i maksymalne) dla zmiennych liczbowych w zbiorze po imputacji. Dla każdej zmiennej liczba obserwacji wynosi n = 973, co oznacza, że w danych po przygotowaniu nie występują braki w analizowanych zmiennych.
+
+Wiek (Age) badanych mieści się w przedziale 18–59 lat, przy średniej 38,43 i medianie 39. Kwartyle (Q1 = 27, Q3 = 49) wskazują, że połowa osób ma od około 27 do 49 lat, co sugeruje przewagę osób w wieku dorosłym/średnim.
+
+Wskaźniki tętna podczas treningu mają dość stabilne wartości w całej próbie. Średnie tętno podczas sesji (Avg_BPM) wynosi średnio 143,77 (mediana 143) i waha się od 120 do 169 uderzeń/min. Tętno maksymalne (Max_BPM) ma średnią 179,88 (mediana 180) w zakresie 160–199, a tętno spoczynkowe (Resting_BPM) średnio 62,22 (mediana 62) w zakresie 50–74. Stosunkowo niewielkie odchylenia standardowe dla tych zmiennych (ok. 7–14) pokazują, że wartości są umiarkowanie zróżnicowane między osobami.
+
+BMI ma średnią 24,91 (mediana 24,16), a kwartyle wynoszą 20,11 i 28,56. Oznacza to, że „typowa” osoba w danych znajduje się w okolicach górnej granicy normy BMI, ale rozpiętość wartości jest duża (12,32–49,84), co wskazuje na obecność zarówno osób bardzo szczupłych, jak i osób z wysokimi wartościami BMI.
+
+Wydatki energetyczne są wyraźnie bardziej zmienne. Spalone kalorie (Calories_Burned) mają średnią 905,42 i medianę 893, a rozrzut jest duży (min 303, max 1783, odchylenie standardowe 272,64). Kwartyle (Q1 = 720, Q3 = 1076) sugerują, że połowa treningów kończy się spaleniem od ok. 720 do 1076 kcal, ale część obserwacji reprezentuje znacznie bardziej wymagające sesje.
+
+Dla zmiennych opisujących cechy fizyczne: średnia masa ciała (Weight) wynosi 73,85 kg (mediana 70 kg, zakres 40–129,9 kg), a średni wzrost (Height) to 1,72 m (mediana 1,71, zakres 1,50–2,00 m). Procent tkanki tłuszczowej (Fat_Percentage) ma średnią 24,98% (mediana 26,20%, zakres 10–35%), co wskazuje na umiarkowane zróżnicowanie składu ciała w próbie.
+
+Zmienne związane z aktywnością pokazują, że przeciętna długość sesji (Session_Duration) to 1,26 h (około 1 godz. 15 min), przy zakresie od 0,5 do 2 godzin. Spożycie wody (Water_Intake) wynosi średnio 2,63 l (od 1,5 do 3,7 l). Natomiast częstotliwość treningów (Workout_Frequency) to średnio 3,32 dnia/tydzień (mediana 3, zakres 2–5), co sugeruje, że większość osób ćwiczy regularnie, kilka razy w tygodniu.
+
+Podsumowując, w danych dominuje populacja dorosłych osób trenujących regularnie 3–4 razy w tygodniu, a największe zróżnicowanie widoczne jest w spalonych kaloriach oraz w BMI/masie ciała.
+
 # Wizualizacja danych
 
 ```{r}
