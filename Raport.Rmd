@@ -316,23 +316,8 @@ library(tidyr)
 library(forcats)
 library(patchwork)
 
-dane_plot <- dane_imp %>%
-rename(
-Weight = `Weight (kg)`,
-Height = `Height (m)`,
-Session_Duration = `Session_Duration (hours)`,
-Water_Intake = `Water_Intake (liters)`,
-Workout_Frequency = `Workout_Frequency (days/week)`
-) %>%
-mutate(
-Gender = factor(Gender, levels = c("Female", "Male"),
-labels = c("Kobieta", "Mężczyzna")),
-Experience_Level = factor(Experience_Level,
-levels = c(1, 2, 3),
-labels = c("Początkujący",
-"Średniozaawansowany",
-"Zaawansowany"))
-)
+dane_plot <- dane_desc
+
 ```
 
 ## Pytanie 1: Czy czas trwania treningu wpływa na liczbę spalonych kalorii, a zależność różni się w zależności od typu treningu?
