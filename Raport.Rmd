@@ -68,7 +68,7 @@ Zakres danych umożliwia analizę zależności pomiędzy cechami fizycznymi, sty
 
 **4.** Czy poziom doświadczenia (Experience_Level) wpływa na spalanie kalorii tak samo w każdym rodzaju treningu (Workout_Type)?
 
-**5.** Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii? 
+**5.** Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii?
 
 **6.** Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?
 
@@ -290,7 +290,7 @@ opis_liczbowe <- dane_desc %>%
 opis_liczbowe
 ```
 
-Statystyki opisowe zmiennych liczbowych
+Statystyki opisowe zmiennych liczbowych 
 W tabeli zestawiono podstawowe miary położenia i zróżnicowania (średnia, odchylenie standardowe, mediana, kwartyle oraz wartości minimalne i maksymalne) dla zmiennych liczbowych w zbiorze po imputacji. Dla każdej zmiennej liczba obserwacji wynosi n = 973, co oznacza, że w danych po przygotowaniu nie występują braki w analizowanych zmiennych.
 
 Wiek (Age) badanych mieści się w przedziale 18–59 lat, przy średniej 38,43 i medianie 39. Kwartyle (Q1 = 27, Q3 = 49) wskazują, że połowa osób ma od około 27 do 49 lat, co sugeruje przewagę osób w wieku dorosłym/średnim.
@@ -354,6 +354,7 @@ labs(x = "Spalone kalorie", y = "Liczba sesji")
 (p_age | p_bmi) / p_cal
 
 ```
+
 Proste rozkłady wybranych zmiennych
 
 Na wykresach przedstawiono rozkłady trzech wybranych zmiennych liczbowych: wieku, BMI oraz liczby spalonych kalorii. Wykresy pozwalają ocenić, czy wartości są skoncentrowane wokół jednego zakresu, czy występują wartości skrajne oraz czy rozkłady są symetryczne.
@@ -365,8 +366,6 @@ BMI. Rozkład BMI jest wyraźnie jednomodalny (ma jeden główny szczyt) i przyp
 Spalone kalorie (Calories_Burned). Rozkład spalonych kalorii jest również jednomodalny, z największą koncentracją obserwacji w środkowym zakresie (około 700–1100 kcal). Widać jednak, że rozkład jest lekko skośny w prawo – część sesji ma bardzo wysoką liczbę spalonych kalorii (powyżej 1400–1500), ale są to już znacznie rzadsze przypadki. Z drugiej strony występują też treningi o niskim wydatku energetycznym (około 300–500 kcal), jednak są one mniej liczne niż obserwacje z centrum rozkładu. Taki kształt sugeruje, że „typowy” trening w danych ma umiarkowanie wysoką intensywność, a bardzo wymagające sesje stanowią mniejszość.
 
 Wniosek: spośród analizowanych rozkładów największą asymetrię i obecność wartości skrajnych widać dla BMI oraz spalonych kalorii, natomiast wiek jest rozłożony bardziej równomiernie w dostępnych przedziałach.
-
-
 
 # Wizualizacja danych
 
@@ -381,7 +380,7 @@ dane_plot <- dane_desc
 
 ```
 
-## Pytanie 1: Czy czas trwania treningu wpływa na liczbę spalonych kalorii, a zależność różni się w zależności od typu treningu?
+**Pytanie 1: Czy czas trwania treningu wpływa na liczbę spalonych kalorii, a zależność różni się w zależności od typu treningu?**
 
 ```{r}
 ggplot(dane_plot, aes(Session_Duration, Calories_Burned)) +
@@ -393,9 +392,9 @@ ggplot(dane_plot, aes(Session_Duration, Calories_Burned)) +
   theme_minimal()
 ```
 
-### Na wykresach (osobno dla każdego typu treningu) widoczna jest wyraźna dodatnia zależność między czasem trwania sesji a liczbą spalonych kalorii — wraz ze wzrostem Session_Duration rośnie Calories_Burned. Linie regresji w poszczególnych panelach mają podobne nachylenie, co sugeruje, że sam wpływ czasu na spalanie kalorii jest zbliżony niezależnie od rodzaju aktywności. Jednocześnie zauważalne są niewielkie różnice w poziomie spalania kalorii (rozrzut i położenie punktów), co może oznaczać, że typ treningu w pewnym stopniu wpływa na liczbę spalonych kalorii, ale głównym czynnikiem pozostaje czas trwania ćwiczeń.
+Na wykresach (osobno dla każdego typu treningu) widoczna jest wyraźna dodatnia zależność między czasem trwania sesji a liczbą spalonych kalorii — wraz ze wzrostem Session_Duration rośnie Calories_Burned. Linie regresji w poszczególnych panelach mają podobne nachylenie, co sugeruje, że sam wpływ czasu na spalanie kalorii jest zbliżony niezależnie od rodzaju aktywności. Jednocześnie zauważalne są niewielkie różnice w poziomie spalania kalorii (rozrzut i położenie punktów), co może oznaczać, że typ treningu w pewnym stopniu wpływa na liczbę spalonych kalorii, ale głównym czynnikiem pozostaje czas trwania ćwiczeń.
 
-## Pytanie 2: Czy wiek (Age) ma związek z tętnem spoczynkowym (Resting_BPM)?
+**Pytanie 2: Czy wiek (Age) ma związek z tętnem spoczynkowym (Resting_BPM)?**
 
 ```{r}
 
@@ -408,9 +407,9 @@ ggplot(dane_plot, aes(cut(Age, breaks = seq(15, 65, 5), right = FALSE), Resting_
 
 ```
 
-### Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany Resting_BPM w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w Resting_BPM występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
+Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany Resting_BPM w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w Resting_BPM występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
 
-## Pytanie 3: Czy rodzaj treningu (Workout_Type) wpływa na średnie tętno użytkowników i liczbę spalonych kalorii?
+**Pytanie 3: Czy rodzaj treningu (Workout_Type) wpływa na średnie tętno użytkowników i liczbę spalonych kalorii?**
 
 ```{r}
 
@@ -433,9 +432,9 @@ ggplot(dane_plot, aes(Workout_Type, Calories_Burned)) +
 
 ```
 
-### Na wykresach porównano rozkład średniego tętna (Avg_BPM) oraz liczby spalonych kalorii (Calories_Burned) w zależności od typu treningu (Workout_Type). W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów (Cardio, HIIT, Strength, Yoga), co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na Avg_BPM i Calories_Burned, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
+Na wykresach porównano rozkład średniego tętna (Avg_BPM) oraz liczby spalonych kalorii (Calories_Burned) w zależności od typu treningu (Workout_Type). W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów (Cardio, HIIT, Strength, Yoga), co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na Avg_BPM i Calories_Burned, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
 
-## Pytanie 4: Czy poziom doświadczenia (Experience_Level) wpływa na spalanie kalorii tak samo w każdym rodzaju treningu (Workout_Type)?
+**Pytanie 4: Czy poziom doświadczenia (Experience_Level) wpływa na spalanie kalorii tak samo w każdym rodzaju treningu (Workout_Type)?**
 
 ```{r}
 
@@ -458,9 +457,9 @@ ggplot(dane_plot, aes(x = Experience_Level, y = Calories_Burned, fill = Experien
 
 ```
 
-### Wykresy przedstawiają średnią ilość spalonych kalorii w zależności od poziomu doświadczenia w każdym typie tregingu. Na wykresach widać, że osoby zaawansowane spalają średnio 80% więcej kalorii niżeli osoby będące na poziomie podstawowym. Różnica w spalaniu z podziałem na typu treningów nie jest znacząca. Ciekawym jest fakt, że podczas uprawiania jogi ćwiczący spalają podobną ilość kalorii co podczas innych treningów, pomimo tego, że przyjęło się, że joga jest mniej wymagającym rodzajem aktywności. Najwyższa średnią wartość spalonych kalorii widać w grupie zaawansowanej treningu siłowego (1318 kcal), co wskazuje, że ten rodzaj aktywności jest najefektyniejszy dla osób, które chcą szybciej spalać kalorie.
+Wykresy przedstawiają średnią ilość spalonych kalorii w zależności od poziomu doświadczenia w każdym typie tregingu. Na wykresach widać, że osoby zaawansowane spalają średnio 80% więcej kalorii niżeli osoby będące na poziomie podstawowym. Różnica w spalaniu z podziałem na typu treningów nie jest znacząca. Ciekawym jest fakt, że podczas uprawiania jogi ćwiczący spalają podobną ilość kalorii co podczas innych treningów, pomimo tego, że przyjęło się, że joga jest mniej wymagającym rodzajem aktywności. Najwyższa średnią wartość spalonych kalorii widać w grupie zaawansowanej treningu siłowego (1318 kcal), co wskazuje, że ten rodzaj aktywności jest najefektyniejszy dla osób, które chcą szybciej spalać kalorie.
 
-## Pytanie 5: Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii? 
+**Pytanie 5: Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii?**
 
 ```{r}
 
@@ -498,9 +497,9 @@ ggplot(dane_plot, aes(x = Gender, y = Calories_Burned, fill = Gender)) +
   theme(legend.position = "none")
 ```
 
-### Wykresy pokazały, że zarówno przeciętna intensywność oraz maksymalna intensywność treningów, o któej mówi nam średnie i maksymalne tętno, nie ma istotnej różnicy pomiędzy kobietami a mężczyznami. Natomiast pomimo podobnych wartości w tętnach mężczyźni spalają więcej kalorii niżeli kobiety. Różnica może wynikać na przykład przez mase ciała bądź skład mięśniowy ciała. 
+Wykresy pokazały, że zarówno przeciętna intensywność oraz maksymalna intensywność treningów, o któej mówi nam średnie i maksymalne tętno, nie ma istotnej różnicy pomiędzy kobietami a mężczyznami. Natomiast pomimo podobnych wartości w tętnach mężczyźni spalają więcej kalorii niżeli kobiety. Różnica może wynikać na przykład przez mase ciała bądź skład mięśniowy ciała.
 
-## Pytanie 6: Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?
+**Pytanie 6: Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?**
 
 ```{r}
 dane_calc <- dane_plot %>%
@@ -541,9 +540,9 @@ p1 + p2 +
   )
 ```
 
-## Z wykresu efektywności według BMI widać, że tylko dla ludzi, których BMI wskazuje wysoką nadwagę wartość spalanych kalorii się znacząco różni. Może wynikać to z fizycznego kosztu poruszania się większą masą ciała niż reszta. Natomiast z wykresu efektywności według poziomu tkanki tłuszczowej widać, że im mniej procent tłuszczu posiada osoba tym więcej kalorii spala. Wyższa efektywność u osób z mniejszą tkanką tłuszczową sugeruje większy udział masy mięśniowej w treningu.
+Z wykresu efektywności według BMI widać, że tylko dla ludzi, których BMI wskazuje wysoką nadwagę wartość spalanych kalorii się znacząco różni. Może wynikać to z fizycznego kosztu poruszania się większą masą ciała niż reszta. Natomiast z wykresu efektywności według poziomu tkanki tłuszczowej widać, że im mniej procent tłuszczu posiada osoba tym więcej kalorii spala. Wyższa efektywność u osób z mniejszą tkanką tłuszczową sugeruje większy udział masy mięśniowej w treningu.
 
-## Pytanie 7 :Czy częstotliwość ćwiczeń w tygodniu (Workout_Frequency) wpływa na wskaźniki zdrowotne, takie jak BMI czy Resting_BPM?
+**Pytanie 7 :Czy częstotliwość ćwiczeń w tygodniu (Workout_Frequency) wpływa na wskaźniki zdrowotne, takie jak BMI czy Resting_BPM?**
 
 ```{r}
 # 7a. Wpływ częstotliwości na BMI
@@ -573,9 +572,9 @@ ggplot(dane_plot, aes(x = factor(Workout_Frequency), y = Resting_BPM, fill = fac
   theme(legend.position = "none")
 ```
 
-### Analiza obu wykresów wykazuje, że wysoka częstotliwość treningów sprzyja stabilizacji kluczowych parametrów zdrowotnych, choć ich mediany pozostają zbliżone we wszystkich grupach. W przypadku wskaźnika BMI oraz tętna spoczynkowego (Resting_BPM) obserwujemy, że osoby trenujące najczęściej (5 razy w tygodniu) charakteryzują się najbardziej przewidywalnymi wynikami – u tych użytkowników rozkład danych jest najwęższy, co oznacza eliminację wartości skrajnych, takich jak wysokie stopnie otyłości czy nietypowo wysokie tętno spoczynkowe. Choć mediana BMI dla wszystkich grup oscyluje w granicach normy (24–25), a tętno spoczynkowe utrzymuje się na stabilnym poziomie ok. 61–63 uderzeń na minutę, to właśnie u osób ćwiczących 5 dni w tygodniu odnotowano najniższe wartości środkowe tętna. Można zatem wnioskować, że regularność treningowa w badanym zbiorze działa przede wszystkim jako czynnik stabilizujący organizm, chroniąc przed wynikami odbiegającymi od normy, natomiast sam wpływ liczby dni treningowych na średnie obniżenie BMI czy tętna jest zauważalny, lecz umiarkowany.
+Analiza obu wykresów wykazuje, że wysoka częstotliwość treningów sprzyja stabilizacji kluczowych parametrów zdrowotnych, choć ich mediany pozostają zbliżone we wszystkich grupach. W przypadku wskaźnika BMI oraz tętna spoczynkowego (Resting_BPM) obserwujemy, że osoby trenujące najczęściej (5 razy w tygodniu) charakteryzują się najbardziej przewidywalnymi wynikami – u tych użytkowników rozkład danych jest najwęższy, co oznacza eliminację wartości skrajnych, takich jak wysokie stopnie otyłości czy nietypowo wysokie tętno spoczynkowe. Choć mediana BMI dla wszystkich grup oscyluje w granicach normy (24–25), a tętno spoczynkowe utrzymuje się na stabilnym poziomie ok. 61–63 uderzeń na minutę, to właśnie u osób ćwiczących 5 dni w tygodniu odnotowano najniższe wartości środkowe tętna. Można zatem wnioskować, że regularność treningowa w badanym zbiorze działa przede wszystkim jako czynnik stabilizujący organizm, chroniąc przed wynikami odbiegającymi od normy, natomiast sam wpływ liczby dni treningowych na średnie obniżenie BMI czy tętna jest zauważalny, lecz umiarkowany.
 
-## Pytanie 8:Czy w zbiorze danych można wyróżnić wyraźne grupy (klastry) użytkowników o podobnych parametrach fizycznych i treningowych?
+**Pytanie 8:Czy w zbiorze danych można wyróżnić wyraźne grupy (klastry) użytkowników o podobnych parametrach fizycznych i treningowych?**
 
 ```{r}
 library(ggplot2)
@@ -601,9 +600,9 @@ ggplot(dane_plot, aes(x = BMI, y = Fat_Percentage, color = Grupa)) +
   theme(legend.position = "bottom")
 ```
 
-### Analiza obu parametrów fizycznych wykazuje, że algorytm klastrowania skutecznie wyodrębnił trzy grupy użytkowników o różnej charakterystyce budowy ciała. Wykres obrazuje silną, liniową zależność między BMI a procentem tkanki tłuszczowej, co pozwala na wyraźny podział populacji siłowni na segmenty. Grupa pierwsza skupia osoby o najniższych parametrach, reprezentujące sylwetki atletyczne lub osoby o niskiej masie ciała. Druga grupa to osoby o średnich, standardowych wartościach, natomiast trzecia grupa obejmuje użytkowników o wyższym BMI i poziomie tłuszczu, którzy mogą stanowić grupę docelową dla treningów redukcyjnych. Zastosowanie tej metody potwierdza, że parametry fizyczne są silnie ze sobą powiązane i pozwalają na automatyczne profilowanie klubowiczów bez konieczności ręcznego przypisywania ich do kategorii.
+Analiza obu parametrów fizycznych wykazuje, że algorytm klastrowania skutecznie wyodrębnił trzy grupy użytkowników o różnej charakterystyce budowy ciała. Wykres obrazuje silną, liniową zależność między BMI a procentem tkanki tłuszczowej, co pozwala na wyraźny podział populacji siłowni na segmenty. Grupa pierwsza skupia osoby o najniższych parametrach, reprezentujące sylwetki atletyczne lub osoby o niskiej masie ciała. Druga grupa to osoby o średnich, standardowych wartościach, natomiast trzecia grupa obejmuje użytkowników o wyższym BMI i poziomie tłuszczu, którzy mogą stanowić grupę docelową dla treningów redukcyjnych. Zastosowanie tej metody potwierdza, że parametry fizyczne są silnie ze sobą powiązane i pozwalają na automatyczne profilowanie klubowiczów bez konieczności ręcznego przypisywania ich do kategorii.
 
-## Pytanie 9:Które zmienne najbardziej wpływają na średnie tętno podczas treningu (Avg_BPM)?
+**Pytanie 9:Które zmienne najbardziej wpływają na średnie tętno podczas treningu (Avg_BPM)?**
 
 ```{r}
 dane_kor <- dane_plot %>%
@@ -630,9 +629,9 @@ ggplot(kor_wyniki, aes(x = reorder(Zmienna, Korelacja), y = Korelacja, fill = Ko
   theme(legend.position = "none")
 ```
 
-### Analiza współczynników korelacji wykazuje, że średnie tętno podczas treningu jest najsilniej powiązane z tętnem maksymalnym (Max_BPM) oraz liczbą spalonych kalorii (Calories_Burned), co potwierdza bezpośrednią zależność między intensywnością wysiłku a wydatkiem energetycznym organizmu. Wykres obrazuje, że parametry takie jak czas trwania sesji (Session_Duration) również wykazują dodatni związek z tętnem, sugerując, że dłuższe i bardziej intensywne treningi utrzymują serce na wyższych obrotach. Z kolei zmienne demograficzne i fizyczne, takie jak wiek (Age) czy BMI, wykazują znacznie słabszy lub wręcz nieistotny wpływ na średnie tętno w tym zbiorze danych, co pozwala wnioskować, że o intensywności pracy serca na siłowni decyduje przede wszystkim charakter i dynamika samego treningu, a nie cechy budowy ciała czy wiek użytkownika. Całość wyników sugeruje, że monitoring Avg_BPM jest najlepszym wskaźnikiem bieżącego zaangażowania organizmu, niezależnym od stałych parametrów fizjologicznych klubowicza.
+Analiza współczynników korelacji wykazuje, że średnie tętno podczas treningu jest najsilniej powiązane z tętnem maksymalnym (Max_BPM) oraz liczbą spalonych kalorii (Calories_Burned), co potwierdza bezpośrednią zależność między intensywnością wysiłku a wydatkiem energetycznym organizmu. Wykres obrazuje, że parametry takie jak czas trwania sesji (Session_Duration) również wykazują dodatni związek z tętnem, sugerując, że dłuższe i bardziej intensywne treningi utrzymują serce na wyższych obrotach. Z kolei zmienne demograficzne i fizyczne, takie jak wiek (Age) czy BMI, wykazują znacznie słabszy lub wręcz nieistotny wpływ na średnie tętno w tym zbiorze danych, co pozwala wnioskować, że o intensywności pracy serca na siłowni decyduje przede wszystkim charakter i dynamika samego treningu, a nie cechy budowy ciała czy wiek użytkownika. Całość wyników sugeruje, że monitoring Avg_BPM jest najlepszym wskaźnikiem bieżącego zaangażowania organizmu, niezależnym od stałych parametrów fizjologicznych klubowicza.
 
-## Pytanie 10:Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?
+**Pytanie 10:Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?**
 
 ```{r}
 dane_grupy <- dane_plot %>%
@@ -657,4 +656,4 @@ ggplot(dane_grupy, aes(x = Calorie_Group, y = Avg_Water, fill = Avg_Water)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-### Analiza wykresu kolumnowego wykazuje bezpośrednią i liniową zależność między wydajnością treningową a nawodnieniem, wskazując, że oba te parametry rosną niemal równolegle. Podział danych na konkretne przedziały energetyczne pozwolił wyeliminować indywidualne odchylenia i ukazać stały trend wzrostowy: podczas gdy osoby spalające do 500 kcal wypijają średnio około 2 litrów wody, w grupach o najwyższej wydajności (powyżej 1750 kcal) średnie spożycie płynów wyraźnie wzrasta, osiągając najwyższe wartości. Taki układ danych jednoznacznie potwierdza, że zapotrzebowanie na wodę jest ściśle skorelowane z objętością wykonanej pracy, co sugeruje, że wyższe spożycie płynów stanowi fizjologiczną konieczność przy sesjach o wysokim wydatku energetycznym.
+Analiza wykresu kolumnowego wykazuje bezpośrednią i liniową zależność między wydajnością treningową a nawodnieniem, wskazując, że oba te parametry rosną niemal równolegle. Podział danych na konkretne przedziały energetyczne pozwolił wyeliminować indywidualne odchylenia i ukazać stały trend wzrostowy: podczas gdy osoby spalające do 500 kcal wypijają średnio około 2 litrów wody, w grupach o najwyższej wydajności (powyżej 1750 kcal) średnie spożycie płynów wyraźnie wzrasta, osiągając najwyższe wartości. Taki układ danych jednoznacznie potwierdza, że zapotrzebowanie na wodę jest ściśle skorelowane z objętością wykonanej pracy, co sugeruje, że wyższe spożycie płynów stanowi fizjologiczną konieczność przy sesjach o wysokim wydatku energetycznym.
