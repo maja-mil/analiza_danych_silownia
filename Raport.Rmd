@@ -307,6 +307,67 @@ Zmienne związane z aktywnością pokazują, że przeciętna długość sesji (S
 
 Podsumowując, w danych dominuje populacja dorosłych osób trenujących regularnie 3–4 razy w tygodniu, a największe zróżnicowanie widoczne jest w spalonych kaloriach oraz w BMI/masie ciała.
 
+```{r}
+# Struktura próby – zmienne jakościowe (częstości)
+
+freq_tbl <- function(x) {
+tibble(kategoria = as.character(x)) %>%
+count(kategoria) %>%
+mutate(odsetek = round(100 * n / sum(n), 1)) %>%
+arrange(desc(n))
+}
+
+freq_tbl(dane_desc$Gender)
+freq_tbl(dane_desc$Workout_Type)
+freq_tbl(dane_desc$Experience_Level)
+
+```
+
+Struktura próby – zmienne jakościowe (częstości)
+
+W tej części przedstawiono rozkłady częstości dla zmiennych jakościowych: płeć (Gender), typ treningu (Workout_Type) oraz poziom doświadczenia (Experience_Level). Analiza dotyczy pełnej próby n = 973 obserwacji (po imputacji i korekcie danych).
+
+Płeć (Gender). W zbiorze znajduje się 511 mężczyzn (52,5%) oraz 462 kobiety (47,5%). Struktura próby jest więc stosunkowo wyrównana, z niewielką przewagą mężczyzn (różnica ok. 5 p.p.).
+
+Typ treningu (Workout_Type). Rozkład typów treningu jest dość równomierny – żadna kategoria nie dominuje wyraźnie. Najczęściej występuje Cardio: 262 osób (26,9%) oraz trening Siłowy: 255 osoby (26,2%). Nieco rzadziej pojawiają się: Joga: 238 osób (24,5%) oraz HIIT: 218 osób (22,3%). Różnice między najczęstszą a najrzadszą kategorią wynoszą ok. 5 punktów procentowych, co sugeruje, że w danych reprezentowane są różne formy aktywności w podobnych proporcjach.
+
+Poziom doświadczenia (Experience_Level). Najliczniejszą grupę stanowią osoby Średniozaawansowane: 406 (41,7%). Następnie osoby Początkujące: 376 (38,6%). Najmniejszą część próby tworzą osoby Zaawansowane: 191 (19,6%). Oznacza to, że większość badanych (łącznie ok. 80%) znajduje się na poziomie początkującym lub średniozaawansowanym, a osoby zaawansowane stanowią około 1/5 całej próby.
+
+Wniosek ogólny: próba jest zróżnicowana pod względem analizowanych kategorii, a rozkłady są na tyle wyrównane (zwłaszcza dla typów treningu), że umożliwiają dalsze porównania między grupami bez ryzyka, że jedna kategoria „zdominuje” analizę.
+
+```{r}
+
+# Proste rozkłady wybranych zmiennych
+
+p_age <- ggplot(dane_desc, aes(x = Age)) +
+geom_histogram(bins = 20) +
+labs(x = "Wiek", y = "Liczba osób")
+
+p_bmi <- ggplot(dane_desc, aes(x = BMI)) +
+geom_histogram(bins = 25) +
+labs(x = "BMI", y = "Liczba osób")
+
+p_cal <- ggplot(dane_desc, aes(x = Calories_Burned)) +
+geom_histogram(bins = 25) +
+labs(x = "Spalone kalorie", y = "Liczba sesji")
+
+(p_age | p_bmi) / p_cal
+
+```
+Proste rozkłady wybranych zmiennych
+
+Na wykresach przedstawiono rozkłady trzech wybranych zmiennych liczbowych: wieku, BMI oraz liczby spalonych kalorii. Wykresy pozwalają ocenić, czy wartości są skoncentrowane wokół jednego zakresu, czy występują wartości skrajne oraz czy rozkłady są symetryczne.
+
+Wiek (Age). Rozkład wieku jest względnie równomierny w całym zakresie obserwacji (od ok. 18 do ok. 59 lat). Nie widać jednego dominującego przedziału wiekowego – liczności w kolejnych koszykach są podobne, z niewielkimi lokalnymi „pikami”. Oznacza to, że dane obejmują szeroki przekrój osób dorosłych, a wiek nie jest w próbie silnie skoncentrowany w jednej grupie.
+
+BMI. Rozkład BMI jest wyraźnie jednomodalny (ma jeden główny szczyt) i przypomina rozkład zbliżony do normalnego, ale z widocznym prawostronnym ogonem. Najwięcej obserwacji skupia się w okolicach wartości typowych dla zakresu normy i lekkiej nadwagi (około niskich–średnich 20-kilku), natomiast dla wyższych wartości (powyżej ~30) liczność stopniowo maleje. Jednocześnie występują pojedyncze obserwacje o bardzo wysokich wartościach BMI (do okolic 50), co wskazuje na obecność wartości skrajnych po prawej stronie rozkładu.
+
+Spalone kalorie (Calories_Burned). Rozkład spalonych kalorii jest również jednomodalny, z największą koncentracją obserwacji w środkowym zakresie (około 700–1100 kcal). Widać jednak, że rozkład jest lekko skośny w prawo – część sesji ma bardzo wysoką liczbę spalonych kalorii (powyżej 1400–1500), ale są to już znacznie rzadsze przypadki. Z drugiej strony występują też treningi o niskim wydatku energetycznym (około 300–500 kcal), jednak są one mniej liczne niż obserwacje z centrum rozkładu. Taki kształt sugeruje, że „typowy” trening w danych ma umiarkowanie wysoką intensywność, a bardzo wymagające sesje stanowią mniejszość.
+
+Wniosek: spośród analizowanych rozkładów największą asymetrię i obecność wartości skrajnych widać dla BMI oraz spalonych kalorii, natomiast wiek jest rozłożony bardziej równomiernie w dostępnych przedziałach.
+
+
+
 # Wizualizacja danych
 
 ```{r}
