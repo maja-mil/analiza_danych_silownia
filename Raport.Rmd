@@ -367,6 +367,55 @@ Spalone kalorie (Calories_Burned). Rozkład spalonych kalorii jest również jed
 
 Wniosek: spośród analizowanych rozkładów największą asymetrię i obecność wartości skrajnych widać dla BMI oraz spalonych kalorii, natomiast wiek jest rozłożony bardziej równomiernie w dostępnych przedziałach.
 
+
+```{r}
+
+# Porównanie spalonych kalorii między typami treningu
+
+  ggplot(dane_desc, aes(x = Workout_Type, y = Calories_Burned)) +
+geom_boxplot() +
+labs(x = "Typ treningu", y = "Spalone kalorie")
+```
+Porównanie spalonych kalorii między typami treningu
+Na wykresie pudełkowym porównano rozkład spalonych kalorii (Calories_Burned) w zależności od typu treningu (Cardio, Siłowy, Joga, HIIT). Boxplot pokazuje medianę (linia w środku pudełka), rozstęp międzykwartylowy (pudełko) oraz wartości odstające (punkty).
+
+We wszystkich czterech typach treningu mediany spalonych kalorii są zbliżone – różnice między grupami nie są duże i rozkłady w dużym stopniu się nakładają. Można zauważyć, że HIIT ma nieco wyższą medianę w porównaniu do pozostałych typów, natomiast Cardio i Siłowy wyglądają bardzo podobnie pod względem położenia mediany.
+
+Pod względem zróżnicowania wyników największy rozrzut (szersze pudełko i/lub dłuższe „wąsy”) widoczny jest dla Jogi, co oznacza, że w tej kategorii spalanie kalorii jest bardziej zmienne między osobami/sesjami. W każdej grupie występują również wartości odstające po stronie wysokich kalorii (powyżej górnego wąsa), co sugeruje, że niezależnie od typu treningu zdarzają się jednostkowe sesje o bardzo dużym wydatku energetycznym.
+
+Wniosek: typ treningu może wiązać się z niewielkimi różnicami w spalaniu kalorii (lekka przewaga HIIT), jednak w danych dominują podobne poziomy kalorii w grupach, a większa zmienność występuje wewnątrz typów treningu niż między nimi.
+
+```{r}
+# Najsilniejsze korelacje między zmiennymi liczbowymi
+
+cor_top10 <- dane_desc %>%
+  dplyr::select_if(is.numeric) %>%
+  cor(use = "pairwise.complete.obs") %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Zmienna1") %>%
+  tidyr::pivot_longer(-Zmienna1, names_to = "Zmienna2", values_to = "Korelacja") %>%
+  dplyr::filter(Zmienna1 < Zmienna2) %>%
+  dplyr::arrange(desc(abs(Korelacja))) %>%
+  dplyr::slice_head(n = 10)
+
+cor_top10
+
+```
+Najsilniejsze korelacje między zmiennymi liczbowymi
+W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi, mierzonych współczynnikiem korelacji Pearsona. Wartości dodatnie oznaczają, że wraz ze wzrostem jednej zmiennej rośnie druga, a wartości ujemne – że wzrost jednej wiąże się ze spadkiem drugiej. Należy podkreślić, że korelacja opisuje współwystępowanie i nie oznacza związku przyczynowo-skutkowego.
+
+Najsilniejsza dodatnia zależność występuje pomiędzy Calories_Burned i Session_Duration (r = 0,908), co jest intuicyjne: dłuższy czas trwania sesji jest związany z większą liczbą spalonych kalorii. Bardzo wysoka korelacja pojawia się również pomiędzy BMI i Weight (r = 0,853) – przy zbliżonym wzroście wyższa masa ciała przekłada się na wyższe BMI.
+
+Umiarkowanie silna dodatnia zależność dotyczy Session_Duration i Workout_Frequency (r = 0,644), co sugeruje, że osoby ćwiczące częściej w tygodniu mają tendencję do dłuższych jednostek treningowych. W podobnym kierunku działa zależność Calories_Burned i Workout_Frequency (r = 0,576) – częstsze treningi wiążą się średnio z większym wydatkiem energetycznym.
+
+Wśród najsilniejszych korelacji ujemnych dominują związki z Fat_Percentage. Zmienna ta jest ujemnie powiązana ze spalonymi kaloriami (Calories_Burned vs Fat_Percentage, r = -0,598), a także z czasem sesji (Fat_Percentage vs Session_Duration, r = -0,582) oraz częstotliwością treningów (Fat_Percentage vs Workout_Frequency, r = -0,537). Oznacza to, że w tym zbiorze osoby z wyższym odsetkiem tkanki tłuszczowej mają tendencję do krótszych i rzadszych treningów oraz niższego wydatku energetycznego. Warto także zauważyć ujemną zależność między Fat_Percentage i Water_Intake (r = -0,589), wskazującą, że większy udział tkanki tłuszczowej wiąże się przeciętnie z mniejszym spożyciem wody.
+
+Słabsze, ale dodatnie korelacje pojawiają się między Water_Intake i Weight (r = 0,394) oraz między Height i Water_Intake (r = 0,394), co może sugerować, że osoby o większych gabarytach (wyższe/cięższe) piją nieco więcej wody – jednak siła tych zależności jest już umiarkowana.
+
+Podsumowując, największe i najbardziej „oczywiste” powiązania dotyczą relacji między parametrami treningu (czas sesji i spalone kalorie) oraz między masą ciała i BMI. Z kolei zmienna Fat_Percentage jest konsekwentnie ujemnie skorelowana z miarami aktywności i wydatku energetycznego, co może wskazywać na różnice w stylu treningu i ogólnej kondycji w analizowanej próbie.
+
+
+
 # Wizualizacja danych
 
 ```{r}
@@ -657,50 +706,3 @@ ggplot(dane_grupy, aes(x = Calorie_Group, y = Avg_Water, fill = Avg_Water)) +
 ```
 
 Analiza wykresu kolumnowego wykazuje bezpośrednią i liniową zależność między wydajnością treningową a nawodnieniem, wskazując, że oba te parametry rosną niemal równolegle. Podział danych na konkretne przedziały energetyczne pozwolił wyeliminować indywidualne odchylenia i ukazać stały trend wzrostowy: podczas gdy osoby spalające do 500 kcal wypijają średnio około 2 litrów wody, w grupach o najwyższej wydajności (powyżej 1750 kcal) średnie spożycie płynów wyraźnie wzrasta, osiągając najwyższe wartości. Taki układ danych jednoznacznie potwierdza, że zapotrzebowanie na wodę jest ściśle skorelowane z objętością wykonanej pracy, co sugeruje, że wyższe spożycie płynów stanowi fizjologiczną konieczność przy sesjach o wysokim wydatku energetycznym.
-
-```{r}
-
-# Porównanie spalonych kalorii między typami treningu
-
-  ggplot(dane_desc, aes(x = Workout_Type, y = Calories_Burned)) +
-geom_boxplot() +
-labs(x = "Typ treningu", y = "Spalone kalorie")
-```
-Porównanie spalonych kalorii między typami treningu
-Na wykresie pudełkowym porównano rozkład spalonych kalorii (Calories_Burned) w zależności od typu treningu (Cardio, Siłowy, Joga, HIIT). Boxplot pokazuje medianę (linia w środku pudełka), rozstęp międzykwartylowy (pudełko) oraz wartości odstające (punkty).
-
-We wszystkich czterech typach treningu mediany spalonych kalorii są zbliżone – różnice między grupami nie są duże i rozkłady w dużym stopniu się nakładają. Można zauważyć, że HIIT ma nieco wyższą medianę w porównaniu do pozostałych typów, natomiast Cardio i Siłowy wyglądają bardzo podobnie pod względem położenia mediany.
-
-Pod względem zróżnicowania wyników największy rozrzut (szersze pudełko i/lub dłuższe „wąsy”) widoczny jest dla Jogi, co oznacza, że w tej kategorii spalanie kalorii jest bardziej zmienne między osobami/sesjami. W każdej grupie występują również wartości odstające po stronie wysokich kalorii (powyżej górnego wąsa), co sugeruje, że niezależnie od typu treningu zdarzają się jednostkowe sesje o bardzo dużym wydatku energetycznym.
-
-Wniosek: typ treningu może wiązać się z niewielkimi różnicami w spalaniu kalorii (lekka przewaga HIIT), jednak w danych dominują podobne poziomy kalorii w grupach, a większa zmienność występuje wewnątrz typów treningu niż między nimi.
-
-```{r}
-# Najsilniejsze korelacje między zmiennymi liczbowymi
-
-cor_top10 <- dane_desc %>%
-  dplyr::select_if(is.numeric) %>%
-  cor(use = "pairwise.complete.obs") %>%
-  as.data.frame() %>%
-  tibble::rownames_to_column("Zmienna1") %>%
-  tidyr::pivot_longer(-Zmienna1, names_to = "Zmienna2", values_to = "Korelacja") %>%
-  dplyr::filter(Zmienna1 < Zmienna2) %>%
-  dplyr::arrange(desc(abs(Korelacja))) %>%
-  dplyr::slice_head(n = 10)
-
-cor_top10
-
-```
-Najsilniejsze korelacje między zmiennymi liczbowymi
-W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi, mierzonych współczynnikiem korelacji Pearsona. Wartości dodatnie oznaczają, że wraz ze wzrostem jednej zmiennej rośnie druga, a wartości ujemne – że wzrost jednej wiąże się ze spadkiem drugiej. Należy podkreślić, że korelacja opisuje współwystępowanie i nie oznacza związku przyczynowo-skutkowego.
-
-Najsilniejsza dodatnia zależność występuje pomiędzy Calories_Burned i Session_Duration (r = 0,908), co jest intuicyjne: dłuższy czas trwania sesji jest związany z większą liczbą spalonych kalorii. Bardzo wysoka korelacja pojawia się również pomiędzy BMI i Weight (r = 0,853) – przy zbliżonym wzroście wyższa masa ciała przekłada się na wyższe BMI.
-
-Umiarkowanie silna dodatnia zależność dotyczy Session_Duration i Workout_Frequency (r = 0,644), co sugeruje, że osoby ćwiczące częściej w tygodniu mają tendencję do dłuższych jednostek treningowych. W podobnym kierunku działa zależność Calories_Burned i Workout_Frequency (r = 0,576) – częstsze treningi wiążą się średnio z większym wydatkiem energetycznym.
-
-Wśród najsilniejszych korelacji ujemnych dominują związki z Fat_Percentage. Zmienna ta jest ujemnie powiązana ze spalonymi kaloriami (Calories_Burned vs Fat_Percentage, r = -0,598), a także z czasem sesji (Fat_Percentage vs Session_Duration, r = -0,582) oraz częstotliwością treningów (Fat_Percentage vs Workout_Frequency, r = -0,537). Oznacza to, że w tym zbiorze osoby z wyższym odsetkiem tkanki tłuszczowej mają tendencję do krótszych i rzadszych treningów oraz niższego wydatku energetycznego. Warto także zauważyć ujemną zależność między Fat_Percentage i Water_Intake (r = -0,589), wskazującą, że większy udział tkanki tłuszczowej wiąże się przeciętnie z mniejszym spożyciem wody.
-
-Słabsze, ale dodatnie korelacje pojawiają się między Water_Intake i Weight (r = 0,394) oraz między Height i Water_Intake (r = 0,394), co może sugerować, że osoby o większych gabarytach (wyższe/cięższe) piją nieco więcej wody – jednak siła tych zależności jest już umiarkowana.
-
-Podsumowując, największe i najbardziej „oczywiste” powiązania dotyczą relacji między parametrami treningu (czas sesji i spalone kalorie) oraz między masą ciała i BMI. Z kolei zmienna Fat_Percentage jest konsekwentnie ujemnie skorelowana z miarami aktywności i wydatku energetycznego, co może wskazywać na różnice w stylu treningu i ogólnej kondycji w analizowanej próbie.
-
