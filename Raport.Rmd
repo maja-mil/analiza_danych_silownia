@@ -781,3 +781,60 @@ Dla Avg_BPM nie stwierdzono istotnych różnic między typami treningu (F(3, 531
 Dla Calories_Burned również nie stwierdzono istotnych różnic (F(3, 533.12)=1.049, p=0.371).
 
 Wniosek: W analizowanej próbie typ treningu nie wpływa istotnie ani na średnie tętno w trakcie treningu (Avg_BPM), ani na liczbę spalonych kalorii (Calories_Burned).
+
+**Pytanie 4: Experience_Level a kalorie – czy efekt zależy od Workout_Type?**
+
+Cel: Sprawdzić, czy poziom doświadczenia wpływa na liczbę spalonych kalorii oraz czy ten wpływ różni się w zależności od typu treningu.
+
+Metoda: Dopasowano model regresji liniowej z interakcją Experience_Level * Workout_Type. Następnie wykonano porównania post-hoc poziomów doświadczenia osobno w każdym typie treningu metodą emmeans z korektą BH.
+
+```{r}
+m4 <- lm(Calories_Burned ~ Experience_Level * Workout_Type, data = dane_plot)
+car::Anova(m4, type = 2)
+
+emmeans(m4, pairwise ~ Experience_Level | Workout_Type, adjust = "BH")
+plot(emmeans(m4, ~ Experience_Level | Workout_Type), comparisons = TRUE)
+```
+
+Analiza wykazała istotny wpływ poziomu doświadczenia na liczbę spalonych kalorii we wszystkich badanych typach treningu (p<0,0001). Porównując osoby początkujące, a zaawansowane widać, że największą różnice odnotowano w treningu siłowym, natomiast najmniejszą w cardio. Wyniki pokazują, że poziom doświadczenia jest silnie związany z liczbą spalonych kalorii: osoby bardziej doświadczone spalają istotnie więcej kalorii. Ten wzorzec jest widoczny we wszystkich typach treningu.
+
+**Pytanie 5: Różnice Kobieta vs Mężczyzna (Avg_BPM, Max_BPM, Calories_Burned)**
+
+Cel: Sprawdzić, czy kobiety i mężczyźni różnią się pod względem średniego tętna w trakcie treningu (Avg_BPM), maksymalnego tętna (Max_BPM) oraz liczby spalonych kalorii (Calories_Burned).
+
+Metoda: Zastosowano test t Welcha dla dwóch niezależnych prób. Ponieważ wykonano trzy testy jednocześnie, uwzględniono korektę wartości p metodą Holma.
+
+```{r}
+t_avg <- t.test(Avg_BPM ~ Gender, data = dane_plot)
+t_max <- t.test(Max_BPM ~ Gender, data = dane_plot)
+t_cal <- t.test(Calories_Burned ~ Gender, data = dane_plot)
+
+t_avg; t_max; t_cal
+
+# korekta na 3 testy
+p.adjust(c(t_avg$p.value, t_max$p.value, t_cal$p.value), method = "holm")
+
+```
+
+Analiza wykazała brak istotnych różnic między kobietami i mężczyznami pod względem średniego oraz maksymalnego tętna zarówno przed jak i po uwzględnieniu korekty wartości p metodą Holma. Obie grupy trenowały z podobną intensywnością sercową. Natomiast odnotowano istotną statystycznie różnicę w liczbie spalonych kalorii, która po korekcie wynosiła mniej niż 0,0001. Mężczyźni spalali średnio o 82,2 kcal więcej niż kobiety (944,5 vs 862,3 kcal), co przy braku różnic w tętnie sugeruje wpływ innych czynników, np. różnic w masie ciała lub składzie tkanek.
+
+
+**Pytanie 6: Czy BMI i Fat_Percentage przewidują efektywność?**
+
+Cel: Sprawdzić, czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są związane z efektywnością treningu zdefiniowaną jako Efficiency = Calories_Burned / Session_Duration.
+
+Metoda: Utworzono zmienną Efficiency, a następnie dopasowano model regresji liniowej wielorakiej: Efficiency ~ BMI + Fat_Percentage.
+
+```{r}
+# przygotowanie danych do analizy efektywności
+dane_calc <- dane_plot %>%
+  mutate(Efficiency = Calories_Burned / Session_Duration) %>%
+  filter(is.finite(Efficiency))
+
+# regresja wieloraka
+m6 <- lm(Efficiency ~ BMI + Fat_Percentage, data = dane_calc)
+summary(m6)
+```
+
+Model regresji liniowej wykazał, że zarówno BMI, jak i procentowa zawartość tkanki tłuszczowej są istotnymi predyktorami efektywności spalania kalorii. Odnotowano przeciwstawne kierunki tych zależności: wyższe BMI sprzyja większemu wydatkowi energetycznemu (wzrost o 1,85 kcal/min na jednostkę BMI), natomiast wyższy poziom tkanki tłuszczowej obniża tę efektywność (spadek o 2,15 kcal/min na każdy 1% tłuszczu). Niska wartość skorygowanego współczynnika determinacji sugeruje jednak, że budowa ciała wyjaśnia jedynie niewielką część całkowitej zmienności tempa spalania kalorii.
+
