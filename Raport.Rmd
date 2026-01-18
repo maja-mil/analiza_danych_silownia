@@ -260,9 +260,9 @@ glimpse(dane_desc)
 
 Podstawowe informacje o danych
 
-Zbiór danych po imputacji i korekcie błędów zawiera 973 obserwacje oraz 30 zmiennych. Wśród nich znajdują się zarówno zmienne opisujące użytkowników i trening (m.in. wiek, płeć, masa ciała, wzrost, wskaźniki tętna, czas sesji, spalone kalorie, typ treningu, poziom doświadczenia), jak i zmienne techniczne związane z imputacją braków danych. Zmienne z końcówką _imp (np. Age_imp, Workout_Type_imp) mają postać logiczną TRUE/FALSE i informują, czy dana wartość w danym wierszu została uzupełniona metodą imputacji.
+Zbiór danych po imputacji i korekcie błędów zawiera 973 obserwacje oraz 30 zmiennych. Wśród nich znajdują się zarówno zmienne opisujące użytkowników i trening (m.in. wiek, płeć, masa ciała, wzrost, wskaźniki tętna, czas sesji, spalone kalorie, typ treningu, poziom doświadczenia), jak i zmienne techniczne związane z imputacją braków danych. Zmienne z końcówką \_imp (np. Age_imp, Workout_Type_imp) mają postać logiczną TRUE/FALSE i informują, czy dana wartość w danym wierszu została uzupełniona metodą imputacji.
 
-W analizie opisowej skupiamy się na zmiennych merytorycznych (charakteryzujących użytkowników i trening), natomiast zmienne _imp traktujemy pomocniczo – służą do kontroli procesu przygotowania danych, a nie do opisu badanej próby.
+W analizie opisowej skupiamy się na zmiennych merytorycznych (charakteryzujących użytkowników i trening), natomiast zmienne \_imp traktujemy pomocniczo – służą do kontroli procesu przygotowania danych, a nie do opisu badanej próby.
 
 Struktura danych wskazuje, że większość zmiennych ma charakter liczbowy (np. Age, Weight, BMI, Calories_Burned, Session_Duration, wskaźniki tętna), a część to zmienne jakościowe (kategoryczne), takie jak Gender, Workout_Type oraz Experience_Level, które zostały dodatkowo przekształcone na czytelne etykiety w języku polskim.
 
@@ -290,8 +290,7 @@ opis_liczbowe <- dane_desc %>%
 opis_liczbowe
 ```
 
-Statystyki opisowe zmiennych liczbowych 
-W tabeli zestawiono podstawowe miary położenia i zróżnicowania (średnia, odchylenie standardowe, mediana, kwartyle oraz wartości minimalne i maksymalne) dla zmiennych liczbowych w zbiorze po imputacji. Dla każdej zmiennej liczba obserwacji wynosi n = 973, co oznacza, że w danych po przygotowaniu nie występują braki w analizowanych zmiennych.
+Statystyki opisowe zmiennych liczbowych W tabeli zestawiono podstawowe miary położenia i zróżnicowania (średnia, odchylenie standardowe, mediana, kwartyle oraz wartości minimalne i maksymalne) dla zmiennych liczbowych w zbiorze po imputacji. Dla każdej zmiennej liczba obserwacji wynosi n = 973, co oznacza, że w danych po przygotowaniu nie występują braki w analizowanych zmiennych.
 
 Wiek (Age) badanych mieści się w przedziale 18–59 lat, przy średniej 38,43 i medianie 39. Kwartyle (Q1 = 27, Q3 = 49) wskazują, że połowa osób ma od około 27 do 49 lat, co sugeruje przewagę osób w wieku dorosłym/średnim.
 
@@ -361,12 +360,11 @@ Na wykresach przedstawiono rozkłady trzech wybranych zmiennych liczbowych: wiek
 
 Wiek (Age). Rozkład wieku jest względnie równomierny w całym zakresie obserwacji (od ok. 18 do ok. 59 lat). Nie widać jednego dominującego przedziału wiekowego – liczności w kolejnych koszykach są podobne, z niewielkimi lokalnymi „pikami”. Oznacza to, że dane obejmują szeroki przekrój osób dorosłych, a wiek nie jest w próbie silnie skoncentrowany w jednej grupie.
 
-BMI. Rozkład BMI jest wyraźnie jednomodalny (ma jeden główny szczyt) i przypomina rozkład zbliżony do normalnego, ale z widocznym prawostronnym ogonem. Najwięcej obserwacji skupia się w okolicach wartości typowych dla zakresu normy i lekkiej nadwagi (około niskich–średnich 20-kilku), natomiast dla wyższych wartości (powyżej ~30) liczność stopniowo maleje. Jednocześnie występują pojedyncze obserwacje o bardzo wysokich wartościach BMI (do okolic 50), co wskazuje na obecność wartości skrajnych po prawej stronie rozkładu.
+BMI. Rozkład BMI jest wyraźnie jednomodalny (ma jeden główny szczyt) i przypomina rozkład zbliżony do normalnego, ale z widocznym prawostronnym ogonem. Najwięcej obserwacji skupia się w okolicach wartości typowych dla zakresu normy i lekkiej nadwagi (około niskich–średnich 20-kilku), natomiast dla wyższych wartości (powyżej \~30) liczność stopniowo maleje. Jednocześnie występują pojedyncze obserwacje o bardzo wysokich wartościach BMI (do okolic 50), co wskazuje na obecność wartości skrajnych po prawej stronie rozkładu.
 
 Spalone kalorie (Calories_Burned). Rozkład spalonych kalorii jest również jednomodalny, z największą koncentracją obserwacji w środkowym zakresie (około 700–1100 kcal). Widać jednak, że rozkład jest lekko skośny w prawo – część sesji ma bardzo wysoką liczbę spalonych kalorii (powyżej 1400–1500), ale są to już znacznie rzadsze przypadki. Z drugiej strony występują też treningi o niskim wydatku energetycznym (około 300–500 kcal), jednak są one mniej liczne niż obserwacje z centrum rozkładu. Taki kształt sugeruje, że „typowy” trening w danych ma umiarkowanie wysoką intensywność, a bardzo wymagające sesje stanowią mniejszość.
 
 Wniosek: spośród analizowanych rozkładów największą asymetrię i obecność wartości skrajnych widać dla BMI oraz spalonych kalorii, natomiast wiek jest rozłożony bardziej równomiernie w dostępnych przedziałach.
-
 
 ```{r}
 
@@ -376,8 +374,8 @@ Wniosek: spośród analizowanych rozkładów największą asymetrię i obecnoś�
 geom_boxplot() +
 labs(x = "Typ treningu", y = "Spalone kalorie")
 ```
-Porównanie spalonych kalorii między typami treningu
-Na wykresie pudełkowym porównano rozkład spalonych kalorii (Calories_Burned) w zależności od typu treningu (Cardio, Siłowy, Joga, HIIT). Boxplot pokazuje medianę (linia w środku pudełka), rozstęp międzykwartylowy (pudełko) oraz wartości odstające (punkty).
+
+Porównanie spalonych kalorii między typami treningu Na wykresie pudełkowym porównano rozkład spalonych kalorii (Calories_Burned) w zależności od typu treningu (Cardio, Siłowy, Joga, HIIT). Boxplot pokazuje medianę (linia w środku pudełka), rozstęp międzykwartylowy (pudełko) oraz wartości odstające (punkty).
 
 We wszystkich czterech typach treningu mediany spalonych kalorii są zbliżone – różnice między grupami nie są duże i rozkłady w dużym stopniu się nakładają. Można zauważyć, że HIIT ma nieco wyższą medianę w porównaniu do pozostałych typów, natomiast Cardio i Siłowy wyglądają bardzo podobnie pod względem położenia mediany.
 
@@ -401,8 +399,8 @@ cor_top10 <- dane_desc %>%
 cor_top10
 
 ```
-Najsilniejsze korelacje między zmiennymi liczbowymi
-W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi, mierzonych współczynnikiem korelacji Pearsona. Wartości dodatnie oznaczają, że wraz ze wzrostem jednej zmiennej rośnie druga, a wartości ujemne – że wzrost jednej wiąże się ze spadkiem drugiej. Należy podkreślić, że korelacja opisuje współwystępowanie i nie oznacza związku przyczynowo-skutkowego.
+
+Najsilniejsze korelacje między zmiennymi liczbowymi W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi, mierzonych współczynnikiem korelacji Pearsona. Wartości dodatnie oznaczają, że wraz ze wzrostem jednej zmiennej rośnie druga, a wartości ujemne – że wzrost jednej wiąże się ze spadkiem drugiej. Należy podkreślić, że korelacja opisuje współwystępowanie i nie oznacza związku przyczynowo-skutkowego.
 
 Najsilniejsza dodatnia zależność występuje pomiędzy Calories_Burned i Session_Duration (r = 0,908), co jest intuicyjne: dłuższy czas trwania sesji jest związany z większą liczbą spalonych kalorii. Bardzo wysoka korelacja pojawia się również pomiędzy BMI i Weight (r = 0,853) – przy zbliżonym wzroście wyższa masa ciała przekłada się na wyższe BMI.
 
@@ -413,8 +411,6 @@ Wśród najsilniejszych korelacji ujemnych dominują związki z Fat_Percentage. 
 Słabsze, ale dodatnie korelacje pojawiają się między Water_Intake i Weight (r = 0,394) oraz między Height i Water_Intake (r = 0,394), co może sugerować, że osoby o większych gabarytach (wyższe/cięższe) piją nieco więcej wody – jednak siła tych zależności jest już umiarkowana.
 
 Podsumowując, największe i najbardziej „oczywiste” powiązania dotyczą relacji między parametrami treningu (czas sesji i spalone kalorie) oraz między masą ciała i BMI. Z kolei zmienna Fat_Percentage jest konsekwentnie ujemnie skorelowana z miarami aktywności i wydatku energetycznego, co może wskazywać na różnice w stylu treningu i ogólnej kondycji w analizowanej próbie.
-
-
 
 # Wizualizacja danych
 
@@ -706,3 +702,82 @@ ggplot(dane_grupy, aes(x = Calorie_Group, y = Avg_Water, fill = Avg_Water)) +
 ```
 
 Analiza wykresu kolumnowego wykazuje bezpośrednią i liniową zależność między wydajnością treningową a nawodnieniem, wskazując, że oba te parametry rosną niemal równolegle. Podział danych na konkretne przedziały energetyczne pozwolił wyeliminować indywidualne odchylenia i ukazać stały trend wzrostowy: podczas gdy osoby spalające do 500 kcal wypijają średnio około 2 litrów wody, w grupach o najwyższej wydajności (powyżej 1750 kcal) średnie spożycie płynów wyraźnie wzrasta, osiągając najwyższe wartości. Taki układ danych jednoznacznie potwierdza, że zapotrzebowanie na wodę jest ściśle skorelowane z objętością wykonanej pracy, co sugeruje, że wyższe spożycie płynów stanowi fizjologiczną konieczność przy sesjach o wysokim wydatku energetycznym.
+
+# Wnioskowanie statystyczne
+
+W niniejszej części analizy przechodzimy od obserwacji opisowych do formalnego wnioskowania statystycznego. Celem tego etapu jest zweryfikowanie, czy zależności i różnice zaobserwowane w zbiorze danych (obejmującym 973 obserwacje) mają charakter systematyczny, czy też mogą być jedynie wynikiem przypadku. Traktujemy posiadane dane jako próbę, co pozwala nam na wyciąganie wniosków dotyczących szerszej populacji osób podejmujących aktywność fizyczną.
+
+Wnioskowanie statystyczne oparto na integracji metod wizualnych z formalnymi testami statystycznymi, ograniczając ich zakres wyłącznie do postawionych pytań badawczych w celu zachowania przejrzystości analizy.
+
+Przyjęto rygorystyczny poziom istotności alpha = 0,05, stosując jednocześnie korektę wartości p metodą Holma lub Benjamini-Hochberg (BH) w przypadku serii testów wykonywanych w ramach jednego pytania. Procedura ta pozwala na skuteczną kontrolę błędu I rodzaju i minimalizuje ryzyko błędnego uznania przypadkowych różnic za istotne statystycznie.
+
+```{r message=FALSE, warning=FALSE}
+# (opcjonalnie) instalacje jednorazowe:
+# install.packages(c("broom", "car", "emmeans"))
+
+library(dplyr)
+library(broom)    # porządne wyświetlanie wyników
+library(car) # Anova(type=2) do modeli z czynnikami
+library(emmeans)  # porównania post-hoc w modelach
+
+alpha <- 0.05
+```
+
+**Pytanie 1: Czas trwania a kalorie – czy zależność zależy od typu treningu?**
+
+Cel: Sprawdzić, czy związek między czasem trwania treningu a liczbą spalonych kalorii różni się w zależności od typu treningu.
+
+Metoda: Dopasowano model regresji liniowej z interakcją Session_Duration (h) \* Workout_Type i przetestowano istotność interakcji (ANOVA dla modelu, testy F).
+
+```{r}
+
+# Model z interakcją: czy nachylenie zależy od typu treningu?
+m1 <- lm(Calories_Burned ~ Session_Duration * Workout_Type, data = dane_plot)
+car::Anova(m1, type = 2)
+
+# Ponieważ interakcja nieistotna -> model uproszczony
+m1_simpler <- lm(Calories_Burned ~ Session_Duration + Workout_Type, data = dane_plot)
+summary(m1_simpler)
+
+```
+
+Wyniki: Czas trwania treningu miał istotny wpływ na liczbę spalonych kalorii (F(1,965)=4539.24, p\<0.001). Nie stwierdzono natomiast istotnej interakcji między czasem a typem treningu (F(3,965)=0.91, p=0.435), co oznacza, że nachylenie zależności jest podobne dla wszystkich typów treningu. Sam typ treningu również nie był istotny (F(3,965)=0.21, p=0.886).
+
+Model uproszczony: W związku z brakiem interakcji dopasowano model bez interakcji. Współczynnik przy Session_Duration wyniósł 722.34, co oznacza wzrost spalonych kalorii średnio o ok. 722 kcal na dodatkową godzinę treningu (≈ 12 kcal na minutę). Model dobrze dopasowywał dane (R² = 0.825).
+
+Wniosek: Liczba spalonych kalorii rośnie wyraźnie wraz z czasem trwania treningu, a typ treningu nie zmienia istotnie tej zależności.
+
+**Pytanie 2: Wiek a tętno spoczynkowe**
+
+Cel: Sprawdzić, czy wiek jest związany z tętnem spoczynkowym.
+
+Metoda: Zastosowano korelację rang Spearmana.
+
+```{r}
+cor.test(dane_plot$Age, dane_plot$Resting_BPM, method = "spearman")
+
+```
+
+Wyniki: Nie stwierdzono istotnej zależności między wiekiem a tętnem spoczynkowym (rho = -0.007, p = 0.826). Wartość współczynnika jest bliska zeru, co wskazuje na brak związku również w sensie praktycznym.
+
+Wniosek: W analizowanej próbie wiek nie wiąże się istotnie z tętnem spoczynkowym.
+
+**Pytanie 3: Czy rodzaj treningu wpływa na Avg_BPM i Calories_Burned?**
+
+Cel: Sprawdzić, czy średnie wartości Avg_BPM oraz Calories_Burned różnią się w zależności od typu treningu.
+
+Metoda: Zastosowano jednoczynnikową analizę wariancji Welcha (ANOVA Welcha), która nie zakłada równości wariancji między grupami.
+
+```{r}
+# ANOVA Welcha (bez założenia równości wariancji)
+oneway.test(Avg_BPM ~ Workout_Type, data = dane_plot)
+oneway.test(Calories_Burned ~ Workout_Type, data = dane_plot)
+```
+
+Wyniki:
+
+Dla Avg_BPM nie stwierdzono istotnych różnic między typami treningu (F(3, 531.71)=0.094, p=0.964).
+
+Dla Calories_Burned również nie stwierdzono istotnych różnic (F(3, 533.12)=1.049, p=0.371).
+
+Wniosek: W analizowanej próbie typ treningu nie wpływa istotnie ani na średnie tętno w trakcie treningu (Avg_BPM), ani na liczbę spalonych kalorii (Calories_Burned).
