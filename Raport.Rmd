@@ -838,3 +838,92 @@ summary(m6)
 
 Model regresji liniowej wykazał, że zarówno BMI, jak i procentowa zawartość tkanki tłuszczowej są istotnymi predyktorami efektywności spalania kalorii. Odnotowano przeciwstawne kierunki tych zależności: wyższe BMI sprzyja większemu wydatkowi energetycznemu (wzrost o 1,85 kcal/min na jednostkę BMI), natomiast wyższy poziom tkanki tłuszczowej obniża tę efektywność (spadek o 2,15 kcal/min na każdy 1% tłuszczu). Niska wartość skorygowanego współczynnika determinacji sugeruje jednak, że budowa ciała wyjaśnia jedynie niewielką część całkowitej zmienności tempa spalania kalorii.
 
+**Pytanie 7: Czy Workout_Frequency wpływa na BMI i Resting_BPM?**
+
+Cel: Sprawdzić, czy częstotliwość treningów w tygodniu (Workout_Frequency) wiąże się z różnicami w BMI oraz tętnie spoczynkowym (Resting_BPM).
+
+Metoda: Zastosowano jednoczynnikową analizę wariancji Welcha (ANOVA Welcha), traktując Workout_Frequency jako zmienną grupującą (kategorie).
+
+
+```{r}
+test_bmi1 <- oneway.test(BMI ~ factor(Workout_Frequency), data = dane_plot)
+test_bmi1
+test_bpm1 <- oneway.test(Resting_BPM ~ factor(Workout_Frequency), data = dane_plot)
+test_bpm1
+# Korekta p value
+p_values <- c(test_bmi1$p.value, test_bpm1$p.value)
+p.adjust(p_values, method = "holm")
+```
+Analiza ANOVA Welcha nie wskazała istotnych różnic wskaźnika BMI (p=0,544) oraz  tętna spoczynkowego (p=0,979) w zależności od częstotliwości treningów w tygodniu. Po zastosowaniu korekty Holma, oba wyniki osiągnęły wartość równą 1, co potwierdza brak istotności statystycznej obu zmiennych.
+
+**Pytanie 8: Segmentacja (k-średnich) – czy klastry różnią się czymś więcej?**
+
+Cel: Sprawdzić, czy segmentacja użytkowników oparta na budowie ciała (BMI i % tłuszczu) różnicuje ich również pod względem nawyków treningowych i cech demograficznych.
+
+Metoda: Zastosowano algorytm k-średnich ($k=3$) do podziału grup, a następnie wykorzystano test ANOVA Welcha z korektą Holma dla zmiennych liczbowych oraz testy chi-kwadrat dla zmiennych jakościowych.
+
+
+```{r}
+library(dplyr)
+
+set.seed(123)
+dane_plot$Grupa <- factor(kmeans(scale(dane_plot[,c("BMI","Fat_Percentage")]),
+                                 centers=3, nstart=25)$cluster)
+dane_plot %>% group_by(Grupa) %>%
+  summarise(n=n(), BMI=mean(BMI), Fat=mean(Fat_Percentage),
+            Age=mean(Age), Cal=mean(Calories_Burned), Dur=mean(Session_Duration),
+            Freq=mean(Workout_Frequency), .groups="drop")
+vars <- c("Age","Calories_Burned","Session_Duration","Workout_Frequency","Resting_BPM","Avg_BPM")
+p <- sapply(vars, \(v) oneway.test(reformulate("Grupa", v), data=dane_plot)$p.value)
+data.frame(zmienna=vars, p=p, p_holm=p.adjust(p, "holm")) |> arrange(p_holm)
+
+# (opcjonalnie) zmienne jakościowe (chi^2)
+sapply(c("Gender","Workout_Type","Experience_Level"),
+       \(v) chisq.test(table(dane_plot$Grupa, dane_plot[[v]]))$p.value)
+
+```
+
+Zastosowano segmentację metodą k-średnich (k=3) na podstawie BMI oraz procentu tkanki tłuszczowej. Następnie sprawdzono, czy wyodrębnione klastry różnią się także innymi cechami. Test ANOVA Welcha z korektą Holma wykazał istotne różnice między klastrami dla czasu trwania sesji, spalonych kalorii oraz częstotliwości treningów (p_holm < 0.05). Nie stwierdzono natomiast istotnych różnic dla wieku ani parametrów tętna (Resting_BPM, Avg_BPM). Dodatkowo testy chi-kwadrat wykazały zależność klastra od płci oraz poziomu doświadczenia, natomiast nie wykazały zależności od typu treningu. Oznacza to, że segmentacja na podstawie BMI i Fat% rozróżnia grupy, które różnią się również zachowaniami treningowymi, a nie tylko budową ciała.
+
+**Pytanie 9: Co najbardziej wpływa na Avg_BPM?**
+
+Cel: Sprawdzić, które cechy użytkownika i treningu są statystycznie związane ze średnim tętnem podczas treningu (Avg_BPM), przy jednoczesnej kontroli pozostałych zmiennych.
+
+Metoda: Zastosowano regresję liniową wieloraką, uwzględniając jednocześnie parametry treningowe i fizyczne (m.in. czas trwania, kalorie, wiek, BMI, płeć, typ treningu).
+
+```{r}
+m9 <- lm(
+  Avg_BPM ~ Max_BPM + Session_Duration + Calories_Burned + Age +
+    BMI + Fat_Percentage + Water_Intake + Workout_Frequency +
+    Gender + Workout_Type + Experience_Level,
+  data = dane_plot
+)
+
+summary(m9)
+car::vif(m9)
+```
+
+Analiza czynników wpływających na średnie tętno podczas treningu została przeprowadzona przy użyciu regresji liniowej wielorakiej, co pozwoliło na ocenę wpływu poszczególnych zmiennych przy jednoczesnej kontroli pozostałych parametrów fizycznych i treningowych. Zbudowany model okazał się bardzo dobrze dopasowany do danych R^2 = 0.8035, skorygowane R^2 = 0.8007, co oznacza, że uwzględnione zmienne wyjaśniają aż 80% całkowitej zmienności parametru Avg_BPM.
+Wyniki modelu wskazują, że kluczowymi i statystycznie istotnymi predyktorami średniego tętna są czas trwania sesji, liczba spalonych kalorii, wiek oraz płeć użytkownika. Odnotowano silny, ujemny związek z czasem trwania treningu beta = -92.79, p < 0.001, co sugeruje, że w bardzo długich sesjach średnie tętno ma tendencję do stabilizowania się na niższych poziomach w porównaniu do krótkich, intensywnych zrywów. Zgodnie z oczekiwaniami, liczba spalonych kalorii wykazuje dodatnią zależność z tętnem beta = 0.129, p < 0.001, podobnie jak wiek badanego beta = 0.392, p < 0.001, co może wskazywać na wyższy koszt fizjologiczny wysiłku u osób starszych. Co istotne, stwierdzono wyraźne różnice między płciami – mężczyźni charakteryzują się średnim tętnem niższym o ok. 11.61 uderzeń na minutę względem kobiet przy zachowaniu tych samych parametrów treningu p < 0.001. Pozostałe zmienne, w tym BMI, procent tkanki tłuszczowej oraz rodzaj treningu, nie okazały się istotnymi predyktorami w tym modelu, co sugeruje, że ich wpływ na tętno jest wtórny wobec dynamiki samej sesji i podstawowych cech demograficznych.
+
+
+
+**Pytanie 10: Czy Water_Intake ma związek z wydajnością?**
+
+Cel: Sprawdzić, czy ilość wypijanej wody (Water_Intake) jest związana ze spalonymi kaloriami (Calories_Burned) oraz ze średnim tętnem (Avg_BPM). Dodatkowo oceniono, czy związek z kaloriami utrzymuje się po uwzględnieniu czasu trwania treningu i typu treningu.
+
+Metoda: Zastosowano korelację rang Spearmana (dla prostych zależności) oraz regresję liniową Calories_Burned ~ Water_Intake + Session_Duration + Workout_Type w celu kontroli czasu i typu treningu.
+
+
+```{r}
+cor.test(dane_plot$Water_Intake, dane_plot$Calories_Burned, method = "spearman", exact = FALSE)
+cor.test(dane_plot$Water_Intake, dane_plot$Avg_BPM, method = "spearman", exact = FALSE)
+
+m10 <- lm(Calories_Burned ~ Water_Intake + Session_Duration + Workout_Type, data = dane_plot)
+summary(m10)
+
+```
+
+Weryfikacja związku między nawodnieniem a wydajnością treningową objęła analizę korelacji rang Spearmana oraz budowę modelu regresji liniowej kontrolującego czas trwania i rodzaj aktywności. Wstępna analiza wykazała istotną statystycznie, dodatnią i umiarkowaną korelację między ilością wypitej wody a liczbą spalonych kalorii ($\rho = 0.346, p < 0.001. Jednocześnie nie stwierdzono żadnego istotnego związku między nawodnieniem a średnim tętnem podczas ćwiczeń rho = -0.0057, p = 0.858, co wskazuje, że spożycie wody nie wpływa bezpośrednio na intensywność pracy serca, lecz na inne aspekty wydatku energetycznego.
+W celu sprawdzenia, czy zależność między wodą a kaloriami nie wynika jedynie z faktu, że dłuższe treningi wymuszają większe picie, zastosowano regresję wieloraką. Model potwierdził, że Water_Intake pozostaje niezależnym i istotnym predyktorem liczby spalonych kalorii beta = 49.19, p < 0.001. Przy założeniu stałego czasu trwania treningu, zwiększenie spożycia wody o jeden litr wiąże się średnio ze wzrostem wydatku energetycznego o ok. 49 kcal. Tak silna zależność, utrzymująca się nawet po wyeliminowaniu wpływu czasu trwania sesji R^2 = 0.836, pozwala na sformułowanie wniosku, że odpowiednie nawodnienie jest statystycznie powiązane z wyższą efektywnością treningową, choć mechanizm ten nie jest zapośredniczony przez wzrost tętna.
+
