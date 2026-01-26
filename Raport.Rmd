@@ -19,49 +19,37 @@ library(dplyr)
 
 # Wstęp
 
-Celem projektu zespołowego realizowanego w roku akademickim 2025/2026 jest analiza danych dotyczących aktywności użytkowników siłowni, obejmująca zarówno ich charakterystyki demograficzne, jak i wskaźniki związane z wydajnością treningową. Projekt ma na celu zrozumienie, jakie czynniki wpływają na efektywność ćwiczeń oraz jakie wzorce zachowań można zaobserwować wśród osób regularnie korzystających z siłowni.
+::: {style="text-align: justify"}
+Celem projektu zespołowego realizowanego w roku akademickim 2025/2026 była analiza danych dotyczących aktywności użytkowników siłowni, obejmująca zarówno ich charakterystyki demograficzne, jak i wskaźniki związane z wydajnością treningową. Projekt miał na celu zrozumienie, jakie czynniki wpływają na efektywność ćwiczeń oraz jakie wzorce zachowań można zaobserwować wśród osób regularnie korzystających z siłowni.
+:::
 
 ## Opis danych
 
-W projekcie wykorzystujemy zbiór danych obejmujący 973 rekordy dotyczące członków siłowni. Każdy wpis zawiera zestaw informacji demograficznych, fizjologicznych oraz dotyczących nawyków treningowych. Dane pozwalają analizować zarówno podstawowe parametry zdrowotne, jak i bardziej zaawansowane wskaźniki wydajności.
+::: {style="text-align: justify"}
+W projekcie został wykorzystany zbiór danych obejmujący 973 rekordy dotyczące członków siłowni. Każdy wpis zawiera zestaw informacji demograficznych, fizjologicznych oraz dotyczących nawyków treningowych. Dane pozwalają analizować zarówno podstawowe parametry zdrowotne, jak i bardziej zaawansowane wskaźniki wydajności. Zbiór zawiera zmienne przedstawione w poniższej tabeli wraz z opisem:
+:::
 
-Najważniejsze zmienne w zbiorze:
-
-**Wiek** – wiek użytkownika siłowni w latach.
-
-**Płeć** – mężczyzna lub kobieta.
-
-**Waga** (kg) – masa ciała w kilogramach.
-
-**Wzrost** (m) – wzrost użytkownika w metrach.
-
-**Max_BPM** – maksymalne tętno zanotowane podczas sesji treningowej.
-
-**Avg_BPM** – średnie tętno podczas treningu.
-
-**Resting_BPM** – tętno spoczynkowe przed rozpoczęciem ćwiczeń.
-
-**Session_Duration** (h) – czas trwania sesji treningowej wyrażony w godzinach.
-
-**Calories_Burned** – liczba kalorii spalonych w trakcie treningu.
-
-**Workout_Type** – rodzaj aktywności (np. kardio, trening siłowy, joga, HIIT).
-
-**Fat_Percentage** – procent tkanki tłuszczowej.
-
-**Water_Intake** (litry) – ilość wody wypitej w ciągu dnia treningowego.
-
-**Workout_Frequency** (dni/tydzień) – ile dni w tygodniu użytkownik ćwiczy.
-
-**Experience_Level** – poziom doświadczenia treningowego (1 – początkujący, 2 – średniozaawansowany, 3 – zaawansowany).
-
-**BMI** – wskaźnik masy ciała oparty na wzroście i wadze.
-
-Zakres danych umożliwia analizę zależności pomiędzy cechami fizycznymi, stylem treningów i nawykami a realnymi wynikami osiąganymi podczas ćwiczeń.
+| Nazwa zmiennej | Opis zmiennej |
+|:-----------------------------------|:-----------------------------------|
+| **Wiek** | Wiek uczestnika badania w latach |
+| **Płeć** | Płeć uczestnika badania (Mężczyzna/Kobieta) |
+| **Waga (kg)** | Masa ciała w kilogramach |
+| **Wzrost (m)** | Wzrost w metrach |
+| **Max_BPM** | Maksymalne tętno zanotowane podczas sesji treningowej |
+| **Avg_BPM** | Średnie tętno podczas treningu |
+| **Resting_BPM** | Tętno spoczynkowe przed rozpoczęciem ćwiczeń |
+| **Session_Duration (h)** | Czas trwania sesji treningowej wyrażony w godzinach |
+| **Calories_Burned** | Liczba kalorii spalonych w trakcie treningu |
+| **Workout_Type** | Rodzaj aktywności (np. kardio, trening siłowy, joga, HIIT) |
+| **Fat_Percentage** | Procent tkanki tłuszczowej |
+| **Water_Intake (litry)** | Ilość wody wypitej w ciągu dnia treningowego |
+| **Workout_Frequency (dni/tydzień)** | Ile dni w tygodniu użytkownik ćwiczy |
+| **Experience_Level** | Poziom doświadczenia treningowego (1 – początkujący, 2 – średniozaawansowany, 3 – zaawansowany) |
+| **BMI** | Wskaźnik masy ciała oparty na wzroście i wadze |
 
 ## Pytania badawcze
 
-Przed przystąpieniem do analizy danych sformułowałyśmy następujące pytania badawcze:
+Przed przystąpieniem do analizy danych zostały sformułowane następujące pytania badawcze:
 
 **1.** Czy czas trwania treningu wpływa na liczbę spalonych kalorii, a zależność różni się w zależności od typu treningu?
 
@@ -85,25 +73,47 @@ Przed przystąpieniem do analizy danych sformułowałyśmy następujące pytania
 
 # Porządkowanie i czyszczenie danych
 
+::: {style="text-align: justify"}
+W pierwszej kolejności przeprowadzono proces czyszczenia zbioru, aby zapewnić wysoką jakość i wiarygodność wyników. Kluczowym elementem tego etapu była szczegółowa weryfikacja braków danych.
+:::
+
 ## Braki danych
 
-```{r}
+::: {style="text-align: justify"}
+Pierwszym zadaniem była identyfikacja braków danych. Przeprowadzona ocena kompletności zbioru wykazała, że w zbiorze znajduje się 80% obserwacji, które nie mają ani jednego braku w swoich danych (wierszach). Patrząc na zbiór przez pryzmat pojedynczych komórek, ogólny odsetek braków wynosi zaledwie 2,7%, co oznacza, że ponad 97% danych zostało poprawnie zarejestrowanych.
+
+W celu identyfikacji zmiennych wymagających poprawy, wykorzystano wykres agregacji braków, ograniczając go do komuln pokazujących tylko te dane, w których znajdują się braki.
+:::
+
+```{r include=FALSE}
 library(vars)
 library(naniar)
 procent <- prop_complete_var(dane)*100
 procent
 ```
 
-```{r}
-library(VIM)
-VIM::aggr(dane_imp, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(dane_imp), cex.axis=.7, gap=3, ylab=c("Procent braków danych","Wzorzec braków danych"))
-```
-
-W danych znajduje się 80% kompletnych wartości.
-
-```{r}
+```{r include=FALSE}
 naniar::vis_miss(dane)
 ```
+
+```{r echo=FALSE}
+library(VIM)
+dane_z_brakami <- dane[, colSums(is.na(dane)) > 0]
+
+# Narysuj wykres tylko dla nich
+VIM::aggr(dane_z_brakami, 
+          col=c('navyblue','red'), 
+          numbers=TRUE, 
+          sortVars=TRUE, 
+          labels=names(dane_z_brakami), 
+          cex.axis=0.7, 
+          gap=3, 
+          ylab=c("Procent braków danych", "Wzorzec braków danych"))
+```
+
+::: {style="text-align: justify"}
+Analiza wizualna pozwala stwierdzić, że braki danych nie są rozproszone chaotycznie, lecz koncentrują się głównie w obrębie trzech zmiennych: Workout_Type (ok. 15%), BMI (ok. 15%) oraz Age (ok. 10%). Najczęstszym wzorcem, występującym bezpośrednio po rekordach kompletnych, jest brak pojedynczej wartości w ramach danej obserwacji. Przypadki, w których brakuje dwóch bądź trzech wartości jednocześnie, są rzadkie i stanowią łącznie poniżej 2% zbioru.
+:::
 
 ## Wzorzec braków danych
 
