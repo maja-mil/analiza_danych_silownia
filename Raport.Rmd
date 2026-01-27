@@ -134,15 +134,17 @@ VIM::aggr(dane_z_brakami,
 Analiza wizualna pozwala stwierdzić, że braki danych nie są rozproszone chaotycznie, lecz koncentrują się głównie w obrębie trzech zmiennych: Workout_Type (ok. 15%), BMI (ok. 15%) oraz Age (ok. 10%). Najczęstszym wzorcem, występującym bezpośrednio po rekordach kompletnych, jest brak pojedynczej wartości w ramach danej obserwacji. Przypadki, w których brakuje dwóch bądź trzech wartości jednocześnie, są rzadkie i stanowią łącznie poniżej 2% zbioru.
 :::
 
-## Wzorzec braków danych
-
-```{r}
-missing_pattern(dane)
-```
-
 ## Imputacje danych
 
-```{r}
+::: {style="text-align: justify"}
+
+Po zidentyfikowaniu skali braków danych podjęto kroki mające na celu uzupełnienie niekompletnych informacji, co jest niezbędne do przeprowadzenia analiz statystycznych. W pierwszej kolejności wykonano obliczenia dla zmiennej BMI, wykorzystując dostępne dane o masie i wzroście użytkowników. Następnie, dla pozostałych braków w zmiennych takich jak rodzaj treningu czy wiek, zastosowano metodę imputacji Hot-Deck, która polega na zastępowaniu brakujących wartości pochodzącymi od innych, podobnymi pod względem cech obserwacji. 
+
+Po przeprowadzeniu imputacji ponownie oceniono kompletność danych, stwierdzając, że wszystkie braki zostały skutecznie uzupełnione.
+
+:::
+
+```{r include=FALSE}
 dane$BMI <- dane$`Weight (kg)`/dane$`Height (m)`^2
 dane_imp <- hotdeck(dane)
 naniar::prop_miss(dane_imp)
@@ -150,9 +152,9 @@ naniar::prop_miss(dane_imp)
 
 # Walidacja danych
 
+```{r echo=FALSE}
 ## Reguły
 
-```{r}
 dane$rec_id <- sprintf("%03d", 1:nrow(dane))
 
 
@@ -208,13 +210,28 @@ Experience_Level %in% c(1, 2, 3),
 # 13. Spójność BMI z masą i wzrostem
 abs(BMI - `Weight (kg)` / (`Height (m)`^2)) <= 0.01)
 
-cf <- confront(dane, rules, key = "rec_id")
-summary(cf)
+dane_imp$rec_id <- sprintf("%03d", 1:nrow(dane_imp))
+cf <- confront(dane_imp, rules, key = "rec_id")
 barplot(cf, main = "dane")
+```
 
+Tu trzeba opisać wykres
+
+I potem napisać, że poniżej przedstawiamy szczegółowe zestawienie błędnych rekordów.
+
+
+```{r echo=FALSE}
 # Identyfikacja rekordów niespełniających reguły Avg_BPM < Max_BPM
 bpm_err <- which(dane_imp$Avg_BPM >= dane_imp$Max_BPM)
+
+tabela_bledow <- dane_imp[bpm_err, c( "Avg_BPM", "Max_BPM")]
+
+knitr::kable(tabela_bledow, 
+             caption = "Szczegółowe zestawienie wartości tętna dla rekordów błędnych",
+             col.names = c("Średnie BPM (Avg_BPM)", "Maksymalne BPM (Max_BPM)"))
 ```
+
+Krótki opis tego co jest wyżej.
 
 ## Naprawa danych
 
@@ -226,20 +243,18 @@ Założyliśmy, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwil
 
 Po wprowadzeniu tej poprawki ponownie uruchomiliśmy procedurę walidacji. Wszystkie reguły zostały spełnione, a w danych nie pozostały już obserwacje oznaczone jako błędne.
 
-```{r}
-# Podgląd danych przed poprawą
-dane_imp[bpm_err, c("Age", "Gender", "Resting_BPM", "Avg_BPM", "Max_BPM")]
-
+```{r echo=FALSE}
 # korekta: ustawiamy Max_BPM o 1 uderzenie/minutę wyżej niż Avg_BPM
 dane_imp$Max_BPM[bpm_err] <- dane_imp$Avg_BPM[bpm_err] + 1
 
 # Walidacja danych po poprawkach
 dane_imp$rec_id <- sprintf("%03d", 1:nrow(dane_imp))
 cf <- confront(dane_imp, rules, key = "rec_id")
-summary(cf)
 barplot(cf, main = "dane_imp_po_poprawkach")
 
 ```
+
+Opis wykresu wyżej
 
 # Analiza opisowa
 
