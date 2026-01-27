@@ -150,6 +150,10 @@ naniar::prop_miss(dane_imp)
 
 # Walidacja danych
 
+::: {style="text-align: justify"}
+Kolejnym kluczowym etapem była walidacja danych, mająca na celu sprawdzenie ich poprawności merytorycznej oraz logicznej spójności. Został zdefiniowany zestaw dwunastu reguł weryfikujących dopuszczalne zakresy wartości dla poszczególnych zmiennych. Poniższy wykres przedstawia, które reguły nie zostały spełnione.
+:::
+
 ```{r echo=FALSE}
 ## Reguły
 
@@ -213,9 +217,11 @@ cf <- confront(dane_imp, rules, key = "rec_id")
 barplot(cf, main = "dane")
 ```
 
-Tu trzeba opisać wykres
+<div style="text-align: justify">
 
-I potem napisać, że poniżej przedstawiamy szczegółowe zestawienie błędnych rekordów.
+Wykres przedstawia zbiorcze wyniki konfrontacji zbioru danych z dwunastoma zdefiniowanymi regułami logicznymi. Pozwala on na błyskawiczną ocenę kondycji merytorycznej danych po procesie czyszczenia i imputacji. Z wykresu wynika, że nie wszystkie obserwacje spełniają regułę Avg_BPM < Max_BPM, co oznacza, że w niektórych przypadkach średnie tętno jest wyższe od maksymalnego. Poniżej przedstawione jest szczegółowe zestawienie błędnych rekordów.
+
+</div>
 
 ```{r echo=FALSE}
 # Identyfikacja rekordów niespełniających reguły Avg_BPM < Max_BPM
