@@ -12,9 +12,26 @@ output:
 ```{r setup, include=FALSE}
 ## Global options
 knitr::opts_chunk$set(cache = TRUE)
+
+# Wczytywanie bibliotek
 library(tidyverse)
-dane <- read_csv("dane/silownia_new.csv")
+library(vars)
+library(naniar)
+library(VIM)
+library(finalfit)
+library(validate)
+library(forcats)
+library(patchwork)
+library(ggplot2)
+library(tidyr)
+library(forcats)
+library(patchwork)
+library(broom)  
+library(car) 
+library(emmeans)  
 library(dplyr)
+
+dane <- read_csv("dane/silownia_new.csv")
 ```
 
 # Wstęp
@@ -86,21 +103,23 @@ W celu identyfikacji zmiennych wymagających poprawy, wykorzystano wykres agrega
 :::
 
 ```{r include=FALSE}
-library(vars)
-library(naniar)
+# Procent braków danych w zbiorze
+
 procent <- prop_complete_var(dane)*100
 procent
 ```
 
 ```{r include=FALSE}
+#Wykres braków danych
+
 naniar::vis_miss(dane)
 ```
 
 ```{r echo=FALSE}
-library(VIM)
 dane_z_brakami <- dane[, colSums(is.na(dane)) > 0]
 
-# Narysuj wykres tylko dla nich
+# Wykres procenta i wzroca braków danych
+
 VIM::aggr(dane_z_brakami, 
           col=c('navyblue','red'), 
           numbers=TRUE, 
@@ -118,7 +137,6 @@ Analiza wizualna pozwala stwierdzić, że braki danych nie są rozproszone chaot
 ## Wzorzec braków danych
 
 ```{r}
-library(finalfit)
 missing_pattern(dane)
 ```
 
@@ -135,10 +153,9 @@ naniar::prop_miss(dane_imp)
 ## Reguły
 
 ```{r}
-
 dane$rec_id <- sprintf("%03d", 1:nrow(dane))
 
-library(validate)
+
 rules <- validator(
 # 1. Wiek
 Age >= 10,
@@ -229,11 +246,6 @@ barplot(cf, main = "dane_imp_po_poprawkach")
 Poniżej przedstawiamy podstawową charakterystykę próby oraz statystyki opisowe dla zmiennych liczbowych i jakościowych na danych po imputacji i korekcie błędów.
 
 ```{r, message=FALSE, warning=FALSE}
-library(tidyr)
-library(ggplot2)
-library(forcats)
-library(patchwork)
-
 # Ujednolicenie nazw i etykiet do tabel i wykresów
 dane_desc <- dane_imp %>%
   rename(
@@ -423,11 +435,6 @@ Podsumowując, największe i najbardziej „oczywiste” powiązania dotyczą re
 # Wizualizacja danych
 
 ```{r}
-library(ggplot2)
-library(tidyr)
-library(forcats)
-library(patchwork)
-
 dane_plot <- dane_desc
 
 ```
@@ -629,8 +636,6 @@ Analiza obu wykresów wykazuje, że wysoka częstotliwość treningów sprzyja s
 **Pytanie 8:Czy w zbiorze danych można wyróżnić wyraźne grupy (klastry) użytkowników o podobnych parametrach fizycznych i treningowych?**
 
 ```{r}
-library(ggplot2)
-
 dane_do_klastrowania <- dane_plot %>% 
   dplyr::select(BMI, Fat_Percentage)
 
@@ -718,14 +723,6 @@ Wnioskowanie statystyczne oparto na integracji metod wizualnych z formalnymi tes
 Przyjęto rygorystyczny poziom istotności alpha = 0,05, stosując jednocześnie korektę wartości p metodą Holma lub Benjamini-Hochberg (BH) w przypadku serii testów wykonywanych w ramach jednego pytania. Procedura ta pozwala na skuteczną kontrolę błędu I rodzaju i minimalizuje ryzyko błędnego uznania przypadkowych różnic za istotne statystycznie.
 
 ```{r message=FALSE, warning=FALSE}
-# (opcjonalnie) instalacje jednorazowe:
-# install.packages(c("broom", "car", "emmeans"))
-
-
-library(broom)    # porządne wyświetlanie wyników
-library(car) # Anova(type=2) do modeli z czynnikami
-library(emmeans)  # porównania post-hoc w modelach
-
 alpha <- 0.05
 ```
 
