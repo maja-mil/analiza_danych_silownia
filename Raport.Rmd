@@ -792,7 +792,7 @@ alpha <- 0.05
 
 Cel: Sprawdzić, czy związek między czasem trwania treningu a liczbą spalonych kalorii różni się w zależności od typu treningu.
 
-Metoda: Dopasowano model regresji liniowej z interakcją Session_Duration (h) \* Workout_Type i przetestowano istotność interakcji (ANOVA dla modelu, testy F).
+Metoda: Dopasowano model regresji liniowej z interakcją Session_Duration (h) * Workout_Type i przetestowano istotność interakcji (ANOVA dla modelu, testy F).
 
 ```{r}
 
@@ -806,7 +806,7 @@ summary(m1_simpler)
 
 ```
 
-Analiza regresji liniowej potwierdziła, że głównym czynnikiem determinującym liczbę spalonych kalorii jest czas trwania sesji (p < 0,001). Statystycznie nie stwierdzono istotnego wpływu rodzaju treningu ani jego interakcji z czasem trwania, co oznacza, że tempo spalania kalorii jest zbliżone dla wszystkich dyscyplin. Model uproszczony charakteryzował się wysokim dopasowaniem (R^2 = 0,825) i wskazał, że każda dodatkowa godzina ćwiczeń zwiększa wydatek energetyczny średnio o 722 kcal (ok. 12 kcal/min). Wniosek ten pozwala uznać czas trwania treningu za uniwersalny i najdokładniejszy miernik efektywności energetycznej w badanym zbiorze.
+Głównym predyktorem liczby spalonych kalorii jest czas trwania sesji (p < 0,001), podczas gdy rodzaj treningu oraz efekty interakcji okazały się nieistotne statystycznie. Model regresji wyjaśnia aż 82,5% zmienności zjawiska. Wynika z niego, że każda minuta treningu przekłada się średnio na spalenie ok. 12 kcal, niezależnie od dyscypliny. Pozwala to przyjąć czas trwania sesji za główny wskaźnik wydatku energetycznego w badanym panelu.
 
 
 **Pytanie 2: Wiek a tętno spoczynkowe**
@@ -841,18 +841,17 @@ Przeprowadzona analiza testem ANOVA Welcha nie dostarczyła dowodów na istnieni
 ::: {style="text-align: justify"}
 Cel: Sprawdzić, czy poziom doświadczenia wpływa na liczbę spalonych kalorii oraz czy ten wpływ różni się w zależności od typu treningu.
 
-Metoda: Dopasowano model regresji liniowej z interakcją Experience_Level \* Workout_Type. Następnie wykonano porównania post-hoc poziomów doświadczenia osobno w każdym typie treningu metodą emmeans z korektą BH.
+Metoda: Dopasowano model regresji liniowej z interakcją Experience_Level * Workout_Type. Następnie wykonano porównania post-hoc poziomów doświadczenia osobno w każdym typie treningu metodą emmeans z korektą BH.
 
 ```{r}
 m4 <- lm(Calories_Burned ~ Experience_Level * Workout_Type, data = dane_plot)
 car::Anova(m4, type = 2)
 
-emmeans(m4, pairwise ~ Experience_Level | Workout_Type, adjust = "BH")
 plot(emmeans(m4, ~ Experience_Level | Workout_Type), comparisons = TRUE)
 ```
 
 ::: {style="text-align: justify"}
-Analiza wykazała istotny wpływ poziomu doświadczenia na liczbę spalonych kalorii we wszystkich badanych typach treningu (p\<0,0001). Porównując osoby początkujące, a zaawansowane widać, że największą różnice odnotowano w treningu siłowym, natomiast najmniejszą w cardio. Wyniki pokazują, że poziom doświadczenia jest silnie związany z liczbą spalonych kalorii: osoby bardziej doświadczone spalają istotnie więcej kalorii. Ten wzorzec jest widoczny we wszystkich typach treningu.
+Analiza wykazała, że poziom doświadczenia ma kluczowy i statystycznie istotny wpływ na liczbę spalonych kalorii (p < 0,001). Osoby o wyższym stopniu zaawansowania spalają znacznie więcej kalorii niż osoby początkujące, co wyraźnie obrazuje wykres średnich szacowanych (emmeans). Co istotne, brak znaczącej interakcji między doświadczeniem a rodzajem treningu (p = 0,4263) wskazuje, że ten wzrost wydatku energetycznego postępuje w sposób zbliżony we wszystkich analizowanych dyscyplinach. Rodzaj treningu sam w sobie nie różnicował istotnie wyników (p = 0,6169), co potwierdza, że to staż treningowy, a nie dyscyplina, jest głównym predyktorem spalonych kalorii w tym modelu.
 :::
 
 **Pytanie 5: Różnice Kobieta vs Mężczyzna (Avg_BPM, Max_BPM, Calories_Burned)**
@@ -884,7 +883,7 @@ Analiza wykazała brak istotnych różnic między kobietami i mężczyznami pod 
 ::: {style="text-align: justify"}
 Cel: Sprawdzić, czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są związane z efektywnością treningu zdefiniowaną jako Efficiency = Calories_Burned / Session_Duration.
 
-Metoda: Utworzono zmienną Efficiency, a następnie dopasowano model regresji liniowej wielorakiej: Efficiency \~ BMI + Fat_Percentage.
+Metoda: Utworzono zmienną Efficiency, a następnie dopasowano model regresji liniowej wielorakiej: Efficiency ~ BMI + Fat_Percentage.
 :::
 
 ```{r}
@@ -998,5 +997,7 @@ summary(m10)
 ```
 
 ::: {style="text-align: justify"}
-Ilość wypijanej wody jest silnie powiązana z większym wydatkiem energetycznym – każda dodatkowa jednostka nawodnienia wiąże się ze wzrostem spalonych kalorii o około 49 kcal. Zależność ta pozostaje statystycznie bardzo istotna (p \< 0,001) nawet przy uwzględnieniu czasu trwania i typu treningu. Jednocześnie badania nie wykazały żadnego istotnego związku między spożyciem wody a średnim tętnem podczas ćwiczeń (p = 0,858). Oznacza to, że nawodnienie sprzyja efektywności spalania kalorii, nie wpływając bezpośrednio na intensywność pracy serca.
+Ilość wypijanej wody jest umiarkowanie powiązana z większym wydatkiem energetycznym – każda dodatkowa jednostka nawodnienia wiąże się ze wzrostem spalonych kalorii o około 49 kcal. Zależność ta pozostaje statystycznie bardzo istotna (p < 0,001) nawet przy uwzględnieniu czasu trwania i typu treningu. Jednocześnie badania nie wykazały żadnego istotnego związku między spożyciem wody a średnim tętnem podczas ćwiczeń (p = 0,858). Oznacza to, że nawodnienie sprzyja efektywności spalania kalorii, nie wpływając bezpośrednio na intensywność pracy serca.
 :::
+
+
