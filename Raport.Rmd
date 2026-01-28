@@ -30,6 +30,7 @@ library(broom)
 library(car) 
 library(emmeans)  
 library(dplyr)
+library(viridis)
 
 dane <- read_csv("dane/silownia_new.csv")
 ```
@@ -47,7 +48,7 @@ W projekcie został wykorzystany zbiór danych obejmujący 973 rekordy dotycząc
 :::
 
 | Nazwa zmiennej | Opis zmiennej |
-|:---|:---|
+|:-----------------------------------|:-----------------------------------|
 | **Wiek** | Wiek uczestnika badania w latach |
 | **Płeć** | Płeć uczestnika badania (Mężczyzna/Kobieta) |
 | **Waga (kg)** | Masa ciała w kilogramach |
@@ -357,10 +358,12 @@ freq_tbl(dane_desc$Experience_Level)
 
 W tej części przedstawiono rozkłady częstości dla zmiennych jakościowych: płeć (Gender), typ treningu (Workout_Type) oraz poziom doświadczenia (Experience_Level). Analiza dotyczy pełnej próby n = 973 obserwacji (po imputacji i korekcie danych).
 
-Struktura płci jest zbliżona do wyrównanej: mężczyźni stanowią 52,5% (n = 511), a kobiety 47,5% (n = 462), co oznacza niewielką przewagę mężczyzn (ok. 5 p.p.). Rozkład typów treningu jest również dość równomierny — najczęściej występują treningi Cardio (27,3%) oraz Siłowe (26,9%), a nieco rzadziej Joga (23,5%) i HIIT (22,2%); różnice między kategoriami są niewielkie (ok. 5 p.p.), co wskazuje na podobną reprezentację różnych form aktywności. W przypadku poziomu doświadczenia największą grupę stanowią osoby średniozaawansowane (41,7%), następnie początkujące (38,6%), a najmniej liczne są osoby zaawansowane (19,6%) — łącznie ok. 80% próby to poziom początkujący lub średniozaawansowany.
+Struktura płci jest wyrównana: mężczyźni stanowią 52,5% (n = 511), a kobiety 47,5% (n = 462), co oznacza niewielką przewagę mężczyzn (ok. 5 p.p.). Rozkład typów treningu jest również dość równomierny — najczęściej występują treningi Cardio (27,3%) oraz Siłowe (26,9%), a nieco rzadziej Joga (23,5%) i HIIT (22,2%). Różnice między kategoriami są niewielkie (ok. 5 p.p.), co wskazuje na podobną reprezentację różnych form aktywności. W przypadku poziomu doświadczenia największą grupę stanowią osoby średniozaawansowane (41,7%), następnie początkujące (38,6%), a najmniej liczne są osoby zaawansowane (19,6%) — łącznie ok. 80% próby to poziom początkujący lub średniozaawansowany.
 
-Wniosek ogólny: próba jest zróżnicowana pod względem analizowanych kategorii, a rozkłady są na tyle wyrównane (zwłaszcza dla typów treningu), że umożliwiają dalsze porównania między grupami bez ryzyka, że jedna kategoria „zdominuje” analizę.
+Podsumowując próba jest zróżnicowana pod względem analizowanych kategorii, a rozkłady są na tyle wyrównane (zwłaszcza dla typów treningu), że umożliwiają dalsze porównania między grupami bez ryzyka, że jedna kategoria „zdominuje” analizę.
 :::
+
+**Proste rozkłady wybranych zmiennych**
 
 ```{r echo=FALSE}
 
@@ -383,8 +386,6 @@ labs(x = "Spalone kalorie", y = "Liczba sesji")
 ```
 
 ::: {style="text-align: justify"}
-**Proste rozkłady wybranych zmiennych**
-
 Na wykresach przedstawiono histogramy wieku, BMI oraz liczby spalonych kalorii, co pozwala ocenić koncentrację obserwacji, asymetrię rozkładów oraz obecność wartości skrajnych.
 
 Rozkład wieku jest względnie równomierny w całym analizowanym zakresie (około 18–59 lat). Nie widać wyraźnie dominującej grupy wieku, co sugeruje, że próba obejmuje szerokie spektrum osób dorosłych.
@@ -396,6 +397,8 @@ Rozkład spalonych kalorii również ma jeden główny szczyt i jest lekko skoś
 Podsumowując, spośród analizowanych zmiennych większą asymetrię i obecność wartości skrajnych obserwuje się dla BMI oraz spalonych kalorii, natomiast wiek ma rozkład bardziej równomierny.
 :::
 
+**Porównanie spalonych kalorii między typami treningu**
+
 ```{r echo=FALSE}
 
 # Porównanie spalonych kalorii między typami treningu
@@ -406,10 +409,10 @@ labs(x = "Typ treningu", y = "Spalone kalorie")
 ```
 
 ::: {style="text-align: justify"}
-**Porównanie spalonych kalorii między typami treningu**
-
 Wykres pudełkowy przedstawia rozkład spalonych kalorii w zależności od typu treningu (Cardio, Siłowy, Joga, HIIT). Widoczne jest duże nakładanie się rozkładów pomiędzy grupami, co sugeruje, że różnice między typami treningu są niewielkie w porównaniu do zróżnicowania wewnątrz grup. Mediany są zbliżone, przy czym HIIT osiąga nieco wyższe wartości centralne niż pozostałe kategorie, natomiast Cardio i trening siłowy prezentują bardzo podobny poziom spalonych kalorii. Największą zmienność wyników obserwuje się dla jogi, gdzie rozstęp wartości jest relatywnie szerszy. Dodatkowo we wszystkich typach treningu występują pojedyncze wysokie wartości odstające, co wskazuje, że niezależnie od kategorii zdarzają się sesje o wyjątkowo dużym wydatku energetycznym. Ogólnie wykres sugeruje, że ewentualny wpływ typu treningu na liczbę spalonych kalorii jest ograniczony, a kluczowe różnice wynikają raczej z indywidualnego przebiegu sesji.
 :::
+
+**Najsilniejsze korelacje między zmiennymi liczbowymi**
 
 ```{r echo=FALSE}
 # Najsilniejsze korelacje między zmiennymi liczbowymi
@@ -429,8 +432,6 @@ cor_top10
 ```
 
 ::: {style="text-align: justify"}
-**Najsilniejsze korelacje między zmiennymi liczbowymi**
-
 W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi (współczynnik korelacji Pearsona). Wartości dodatnie oznaczają współwystępowanie wzrostu obu zmiennych, a ujemne — wzrost jednej zmiennej przy spadku drugiej. Korelacje mają charakter opisowy i nie przesądzają o zależnościach przyczynowo-skutkowych.
 
 Najsilniejszą dodatnią korelację zaobserwowano między Calories_Burned a Session_Duration (r = 0,908), co wskazuje na ścisły związek pomiędzy czasem trwania sesji a wydatkiem energetycznym. Wysoka korelacja występuje również między BMI a Weight (r = 0,853), zgodnie z konstrukcją wskaźnika BMI.
@@ -444,28 +445,46 @@ Podsumowując, najsilniejsze zależności dotyczą (1) relacji między czasem tr
 
 # Wizualizacja danych
 
-```{r}
+::: {style="text-align: justify"}
+Kolejnym etapem, następującym po statystycznym zapoznaniu się ze zbiorem danych, jest ich wizualizacja. Pozwala ona na szybką identyfikację trendów, wartości odstających oraz kluczowych relacji, które mogą pozostawać nieuchwytne na poziomie analizy tabelarycznej. Poniższe wykresy stanowią graficzne zestawienie zmiennych w nawiązaniu do pytań badawczych.
+:::
+
+```{r include=FALSE}
+# Zmiana nazwy 
 dane_plot <- dane_desc
-
 ```
 
-**Pytanie 1: Czy czas trwania treningu wpływa na liczbę spalonych kalorii, a zależność różni się w zależności od typu treningu?**
+**Czas trwania treningu w porównaniu do spalonych kalorii**
 
-```{r}
-ggplot(dane_plot, aes(Session_Duration, Calories_Burned)) +
-  geom_point(alpha = 0.5) +
-  geom_smooth(method = "lm", se = FALSE) +
-  facet_wrap(~ Workout_Type) +
-  labs(title = "Spalone kalorie a czas trwania – osobno dla typów treningu",
-       x = "Czas trwania [h]", y = "Spalone kalorie") +
-  theme_minimal()
+```{r echo=FALSE}
+
+ggplot(dane_desc, aes(x = Session_Duration, y = Calories_Burned, color = Workout_Type)) +
+  geom_point(alpha = 0.4, size = 1.5) +  
+  geom_smooth(method = "lm", se = FALSE, size = 1.2) + 
+   facet_wrap(~ Workout_Type) +
+  scale_color_viridis_d(option = "plasma") + # czytelna paleta kolorów
+  labs(
+    title = "Zależność spalonych kalorii od czasu trwania sesji",
+    subtitle = "Z podziałem na typy aktywności i dopasowaniem linii regresji",
+    x = "Czas trwania sesji (godziny)",
+    y = "Spalone kalorie (kcal)",
+    color = "Typ treningu"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(face = "bold", size = 14),
+    panel.grid.minor = element_blank()
+  )
 ```
 
-Na wykresach (osobno dla każdego typu treningu) widoczna jest wyraźna dodatnia zależność między czasem trwania sesji a liczbą spalonych kalorii — wraz ze wzrostem Session_Duration rośnie Calories_Burned. Linie regresji w poszczególnych panelach mają podobne nachylenie, co sugeruje, że sam wpływ czasu na spalanie kalorii jest zbliżony niezależnie od rodzaju aktywności. Jednocześnie zauważalne są niewielkie różnice w poziomie spalania kalorii (rozrzut i położenie punktów), co może oznaczać, że typ treningu w pewnym stopniu wpływa na liczbę spalonych kalorii, ale głównym czynnikiem pozostaje czas trwania ćwiczeń.
+::: {style="text-align: justify"}
+Na powyższych wykresach, przedstawionych osobno dla każdego typu treningu, widoczna jest wyraźna dodatnia zależność liniowa między czasem trwania sesji a liczbą spalonych kalorii. Stanowi to bezpośrednie potwierdzenie wyników uzyskanych w analizie korelacji ($r = 0,91$). Linie regresji w poszczególnych panelach charakteryzują się zbliżonym nachyleniem, co sugeruje, że wpływ czasu na spalanie kalorii jest stały i niezależny od rodzaju aktywności.
+:::
 
-**Pytanie 2: Czy wiek (Age) ma związek z tętnem spoczynkowym (Resting_BPM)?**
+**Związek wieku z tętnem spoczynkowym**
 
-```{r}
+```{r echo=FALSE}
 
 ggplot(dane_plot, aes(cut(Age, breaks = seq(15, 65, 5), right = FALSE), Resting_BPM)) +
   geom_boxplot(alpha = 0.6, outlier.alpha = 0.2) +
@@ -476,34 +495,57 @@ ggplot(dane_plot, aes(cut(Age, breaks = seq(15, 65, 5), right = FALSE), Resting_
 
 ```
 
-Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany Resting_BPM w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w Resting_BPM występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
+::: {style="text-align: justify"}
+Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany spoczynkowego tętna w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w zmiennej występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
+:::
 
-**Pytanie 3: Czy rodzaj treningu (Workout_Type) wpływa na średnie tętno użytkowników i liczbę spalonych kalorii?**
+**Rodzaj treningu a średnie tętno użytkowników i liczba spalonych kalorii**
 
-```{r}
+```{r echo=FALSE}
 
 # Avg_BPM wg typu treningu
 
-ggplot(dane_plot, aes(Workout_Type, Avg_BPM)) +
+ggplot(dane_plot, aes(x = Workout_Type, y = Avg_BPM, fill = Workout_Type)) +
   geom_boxplot(alpha = 0.5, outlier.alpha = 0.2) +
-  geom_jitter(width = 0.15, alpha = 0.15, size = 0.8) +
-  labs(title = "Średnie tętno (Avg_BPM) wg typu treningu",
-       x = "Typ treningu", y = "Avg_BPM") +
-  theme_minimal()
+  geom_jitter(aes(color = Workout_Type), width = 0.15, alpha = 0.2, size = 0.8) +
+  scale_fill_viridis_d(option = "plasma") +
+  scale_color_viridis_d(option = "plasma") +
+  labs(
+    title = "Analiza intensywności wysiłku dla różnych form aktywności",
+    x = "Typ treningu", 
+    y = "Średnie tętno (BPM)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
 
+```{r echo=FALSE}
 # Calories_Burned wg typu treningu
-ggplot(dane_plot, aes(Workout_Type, Calories_Burned)) +
+ggplot(dane_plot, aes(x = Workout_Type, y = Calories_Burned, fill = Workout_Type)) +
   geom_boxplot(alpha = 0.5, outlier.alpha = 0.2) +
-  geom_jitter(width = 0.15, alpha = 0.15, size = 0.8) +
-  labs(title = "Spalone kalorie wg typu treningu",
-       x = "Typ treningu", y = "Calories_Burned") +
-  theme_minimal()
+  geom_jitter(aes(color = Workout_Type), width = 0.15, alpha = 0.2, size = 0.8) +
+  scale_fill_viridis_d(option = "plasma") +
+  scale_color_viridis_d(option = "plasma") +
+  labs(title = "Porównanie rozkładu wydatku energetycznego",
+       x = "Typ treningu", 
+       y = "Spalone kalorie") +
+  theme_minimal() +
+  theme(
+    legend.position = "none", # Ukrywamy legendę, bo osie są już opisane
+    plot.title = element_text(face = "bold")
+  )
 
 ```
 
-Na wykresach porównano rozkład średniego tętna (Avg_BPM) oraz liczby spalonych kalorii (Calories_Burned) w zależności od typu treningu (Workout_Type). W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów (Cardio, HIIT, Strength, Yoga), co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na Avg_BPM i Calories_Burned, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
+::: {style="text-align: justify"}
+Na wykresach porównano rozkład średniego tętna oraz liczby spalonych kalorii w zależności od typu treningu. W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów, co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na obie badane zmienne, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
+:::
 
-**Pytanie 4: Czy poziom doświadczenia (Experience_Level) wpływa na spalanie kalorii tak samo w każdym rodzaju treningu (Workout_Type)?**
+**Poziom doświadczenia a spalanie kalorii w każdym rodzaju treningu**
 
 ```{r}
 
@@ -512,10 +554,10 @@ ggplot(dane_plot, aes(x = Experience_Level, y = Calories_Burned, fill = Experien
   stat_summary(fun = "mean", geom = "text", 
                aes(label = after_stat(round(y, 0))), 
                vjust = -0.5, size = 3.5) +
+  scale_fill_viridis_d(option = "plasma") +
   facet_wrap(~ Workout_Type) +
   coord_cartesian(clip = "off") +
-  labs(title = "Gdzie doświadczenie ma największe znaczenie?",
-       subtitle = "Średnie spalanie kalorii wg poziomu zaawansowania",
+  labs(title = "Średnie spalanie kalorii wg poziomu zaawansowania",
        x = "Poziom doświadczenia", 
        y = "Średnio spalone kalorie") +
   theme_minimal() +
@@ -526,7 +568,9 @@ ggplot(dane_plot, aes(x = Experience_Level, y = Calories_Burned, fill = Experien
 
 ```
 
+::: {style="text-align: justify"}
 Wykresy przedstawiają średnią ilość spalonych kalorii w zależności od poziomu doświadczenia w każdym typie tregingu. Na wykresach widać, że osoby zaawansowane spalają średnio 80% więcej kalorii niżeli osoby będące na poziomie podstawowym. Różnica w spalaniu z podziałem na typu treningów nie jest znacząca. Ciekawym jest fakt, że podczas uprawiania jogi ćwiczący spalają podobną ilość kalorii co podczas innych treningów, pomimo tego, że przyjęło się, że joga jest mniej wymagającym rodzajem aktywności. Najwyższa średnią wartość spalonych kalorii widać w grupie zaawansowanej treningu siłowego (1318 kcal), co wskazuje, że ten rodzaj aktywności jest najefektyniejszy dla osób, które chcą szybciej spalać kalorie.
+:::
 
 **Pytanie 5: Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii?**
 
