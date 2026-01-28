@@ -23,6 +23,7 @@ knitr::opts_chunk$set(
   dpi = 150,
   out.width = "90%",
   cache = TRUE
+  comment = NA 
 )
 
 # Wczytywanie bibliotek
@@ -1014,8 +1015,6 @@ summary(m10)
 ::: {style="text-align: justify"}
 Ilość wypijanej wody jest umiarkowanie powiązana z większym wydatkiem energetycznym – każda dodatkowa jednostka nawodnienia wiąże się ze wzrostem spalonych kalorii o około 49 kcal. Zależność ta pozostaje statystycznie bardzo istotna (p \< 0,001) nawet przy uwzględnieniu czasu trwania i typu treningu. Jednocześnie badania nie wykazały żadnego istotnego związku między spożyciem wody a średnim tętnem podczas ćwiczeń (p = 0,858). Oznacza to, że nawodnienie sprzyja efektywności spalania kalorii, nie wpływając bezpośrednio na intensywność pracy serca.
 :::
-
-::::::::::::::::
 
 # Podsumowanie i wnioski
 
