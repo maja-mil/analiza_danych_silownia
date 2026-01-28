@@ -233,18 +233,14 @@ knitr::kable(tabela_bledow,
              col.names = c("Średnie BPM (Avg_BPM)", "Maksymalne BPM (Max_BPM)"))
 ```
 
-Krótki opis tego co jest wyżej.
+::: {style="text-align: justify"}
+Jak wykazano w powyższej tabeli, w skrajnych przypadkach średnie tętno przewyższało maksymalne o kilka uderzeń na minutę. Tabela pokazała, że w prawie 30 obserwacjach występuje taki błąd.
+:::
 
 ## Naprawa danych
 
 ::: {style="text-align: justify"}
-Po uzupełnieniu braków danych i zastosowaniu reguł walidacyjnych sprawdziliśmy, czy w zbiorze nie pozostały wartości sprzeczne logicznie. Większość obserwacji spełniała przyjęte warunki dotyczące wieku, wzrostu, masy ciała, BMI, czasu trwania treningu czy spalonych kalorii.
-
-Jedyny problem dotyczył zmiennych opisujących tętno. W kilku rekordach średnie tętno podczas treningu (Avg_BPM) było równe lub nawet wyższe niż maksymalne zarejestrowane tętno (Max_BPM). Taka sytuacja jest nielogiczna, bo zgodnie z definicją to tętno maksymalne powinno być najwyższą wartością z całej sesji.
-
-Założyliśmy, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwilowego braku odczytu w momencie faktycznego maksimum), natomiast średnie tętno jest bardziej stabilne i wiarygodne. Dlatego zdecydowaliśmy się korygować wyłącznie Max_BPM. Dla wszystkich obserwacji, w których Avg_BPM było większe lub równe Max_BPM, zwiększyliśmy Max_BPM o 1 uderzenie na minutę względem wartości średniej. Zmiana ta jest bardzo niewielka, nie wpływa istotnie na rozkład zmiennej, a jednocześnie przywraca logiczną relację pomiędzy średnim i maksymalnym tętnem.
-
-Po wprowadzeniu tej poprawki ponownie uruchomiliśmy procedurę walidacji. Wszystkie reguły zostały spełnione, a w danych nie pozostały już obserwacje oznaczone jako błędne.
+W celu wykonania dalszej analizy  należy naprawić dane, które nie spełniały wcześniej ustalonych reguł. Przyjęto założenie, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwilowego braku odczytu w momencie faktycznego maksimum), natomiast średnie tętno jest bardziej stabilne i wiarygodne. Dlatego zdecydowano skorygować wyłącznie maksymalne tętno. Dla wszystkich obserwacji, w których średnie tętno było większe lub równe maksymalnego, zwiększono maksymalne o 1 uderzenie na minutę względem wartości średniej. Zmiana ta jest bardzo niewielka, nie wpływa istotnie na rozkład zmiennej, a jednocześnie przywraca logiczną relację pomiędzy średnim i maksymalnym tętnem. Aby być pewnym, że dane zostały poprawione, ponownie sprawdzono zgodność danych z regułami, co zostało przedstawione na poniższym wykresie.
 :::
 
 ```{r echo=FALSE}
@@ -258,7 +254,11 @@ barplot(cf, main = "dane_imp_po_poprawkach")
 
 ```
 
-Opis wykresu wyżej
+::: {style="text-align: justify"}
+
+Wyniki przedstawione na powyższym wykresie potwierdzają, że proces naprawczy zakończył się sukcesem. Widać, że wszystkie zdefiniowane reguły zostały spełnione. Całkowite wyeliminowanie błędów oznacza, że zbiór jest obecnie kompletny i gotowy do przeprowadzenia analiz statystycznych oraz weryfikacji postawionych pytań badawczych. 
+:::
+
 
 # Analiza opisowa
 
@@ -479,7 +479,7 @@ ggplot(dane_desc, aes(x = Session_Duration, y = Calories_Burned, color = Workout
 ```
 
 ::: {style="text-align: justify"}
-Na powyższych wykresach, przedstawionych osobno dla każdego typu treningu, widoczna jest wyraźna dodatnia zależność liniowa między czasem trwania sesji a liczbą spalonych kalorii. Stanowi to bezpośrednie potwierdzenie wyników uzyskanych w analizie korelacji ($r = 0,91$). Linie regresji w poszczególnych panelach charakteryzują się zbliżonym nachyleniem, co sugeruje, że wpływ czasu na spalanie kalorii jest stały i niezależny od rodzaju aktywności.
+Wykresy rozrzutu z nałożonymi liniami regresji potwierdzają silną, dodatnią korelację liniową (r = 0,91) między czasem trwania sesji a liczbą spalonych kalorii we wszystkich analizowanych kategoriach. Zbliżone nachylenie linii regresji sugeruje, że czas trwania treningu jest głównym determinantem wydatku energetycznego, niezależnie od wybranej formy aktywności. Niemniej jednak, widoczne różnice w zagęszczeniu punktów oraz subtelne różnice w kącie nachylenia prostych (szczególnie w przypadku HIIT względem Jogi) wskazują na zróżnicowaną intensywność spalania właściwą dla poszczególnych typów treningu.
 :::
 
 **Związek wieku z tętnem spoczynkowym**
@@ -496,7 +496,7 @@ ggplot(dane_plot, aes(cut(Age, breaks = seq(15, 65, 5), right = FALSE), Resting_
 ```
 
 ::: {style="text-align: justify"}
-Porównanie rozkładów tętna spoczynkowego w 5-letnich grupach wiekowych nie pokazuje wyraźnego, systematycznego trendu wzrostowego ani spadkowego. Mediany spoczynkowego tętna w większości przedziałów są do siebie zbliżone (około niskich 60 BPM), a rozrzut wyników w grupach jest podobny. Oznacza to, że w analizowanym zbiorze wiek sam w sobie nie wydaje się silnie związany z tętnem spoczynkowym — większe różnice w zmiennej występują raczej między pojedynczymi osobami (wewnątrz grup) niż pomiędzy grupami wiekowymi.
+Analiza rozkładów tętna spoczynkowego w 5-letnich przedziałach wiekowych nie wykazuje systematycznego trendu wzrostowego ani spadkowego. Mediany tętna w większości grup oscylują w granicach 61–64 BPM, a zbliżona wysokość pudełek (rozstęp międzykwartylowy) świadczy o homogeniczności wariancji między grupami. Wyniki sugerują, że w analizowanej populacji wiek nie jest kluczowym determinantem tętna spoczynkowego. Znacznie większą zmienność obserwuje się na poziomie osobniczym wewnątrz każdej z grup niż pomiędzy poszczególnymi grupami wiekowymi.
 :::
 
 **Rodzaj treningu a średnie tętno użytkowników i liczba spalonych kalorii**
@@ -542,7 +542,11 @@ ggplot(dane_plot, aes(x = Workout_Type, y = Calories_Burned, fill = Workout_Type
 ```
 
 ::: {style="text-align: justify"}
-Na wykresach porównano rozkład średniego tętna oraz liczby spalonych kalorii w zależności od typu treningu. W przypadku średniego tętna mediany i rozrzut wartości są bardzo podobne dla wszystkich typów, co sugeruje, że rodzaj treningu nie różnicuje wyraźnie średniego poziomu tętna podczas sesji. Dla spalonych kalorii również widoczne jest duże nakładanie się rozkładów pomiędzy grupami — różnice w medianach są niewielkie, a w każdej kategorii występują wartości skrajne. Ogólnie wskazuje to, że w tym zbiorze danych typ treningu ma co najwyżej umiarkowany wpływ na obie badane zmienne, a większa zmienność występuje pomiędzy osobami niż pomiędzy samymi typami aktywności.
+Analiza porównawcza średniego tętna oraz wydatku energetycznego w zależności od rodzaju aktywności wykazuje wysoki stopień homogeniczności danych. Mediany tętna oraz spalonych kalorii pozostają na zbliżonym poziomie dla wszystkich grup, co sugeruje, że w badanym zbiorze intensywność sesji była do siebie upodobniona niezależnie od dyscypliny.
+
+Szerokie i w dużej mierze pokrywające się przedziały międzykwartylowe (pudełka) jednoznacznie wskazują na brak statystycznie istotnych różnic między typami treningu, przy czym w kategoriach HIIT oraz treningu Siłowego odnotowano pojedyncze wartości odstające, reprezentujące wydatek energetyczny przekraczający 1500 kcal. 
+
+Ostatecznie, podobnie jak w przypadku analizy wpływu wieku, wariancja wewnątrz każdej z grup dominuje nad różnicami między kategoriami aktywności, co prowadzi do wniosku, że indywidualne zaangażowanie oraz cechy osobnicze mają w tym zbiorze danych większy wpływ na końcowy wynik niż sam wybór rodzaju ćwiczeń
 :::
 
 **Poziom doświadczenia a spalanie kalorii w każdym rodzaju treningu**
@@ -569,10 +573,10 @@ ggplot(dane_plot, aes(x = Experience_Level, y = Calories_Burned, fill = Experien
 ```
 
 ::: {style="text-align: justify"}
-Wykresy przedstawiają średnią ilość spalonych kalorii w zależności od poziomu doświadczenia w każdym typie tregingu. Na wykresach widać, że osoby zaawansowane spalają średnio 80% więcej kalorii niżeli osoby będące na poziomie podstawowym. Różnica w spalaniu z podziałem na typu treningów nie jest znacząca. Ciekawym jest fakt, że podczas uprawiania jogi ćwiczący spalają podobną ilość kalorii co podczas innych treningów, pomimo tego, że przyjęło się, że joga jest mniej wymagającym rodzajem aktywności. Najwyższa średnią wartość spalonych kalorii widać w grupie zaawansowanej treningu siłowego (1318 kcal), co wskazuje, że ten rodzaj aktywności jest najefektyniejszy dla osób, które chcą szybciej spalać kalorie.
+Analiza średniego wydatku energetycznego w zależności od poziomu doświadczenia ujawnia, że stopień zaawansowania ćwiczącego jest kluczowym czynnikiem determinującym liczbę spalonych kalorii we wszystkich typach treningu. Z danych wynika, że osoby zaawansowane spalają średnio o ok. 80% więcej energii niż osoby początkujące, przy czym różnice między poszczególnymi dyscyplinami sportowymi na tym samym poziomie zaawansowania pozostają marginalne. Interesującym spostrzeżeniem jest fakt, że wydatek energetyczny podczas sesji jogi na poziomie zaawansowanym (1264 kcal) jest porównywalny z treningiem HIIT czy Cardio, co podważa powszechne przekonanie o niskiej intensywności tej formy aktywności. Najwyższą średnią wartość odnotowano w grupie zaawansowanej treningu siłowego (1300 kcal), co pozwala wskazać tę formę aktywności jako potencjalnie najefektywniejszą dla osób dążących do maksymalizacji deficytu kalorycznego, o ile dysponują one odpowiednim przygotowaniem technicznym.
 :::
 
-**Pytanie 5: Czy występują różnice między kobietami i mężczyznami w intensywności treningów (Avg_BPM, Max_BPM) oraz liczbie spalonych kalorii?**
+**Wpływ płci na intensywność wysiłku fizycznego oraz poziom wydatku energetycznego.**
 
 ```{r}
 
@@ -610,9 +614,11 @@ ggplot(dane_plot, aes(x = Gender, y = Calories_Burned, fill = Gender)) +
   theme(legend.position = "none")
 ```
 
-Wykresy pokazały, że zarówno przeciętna intensywność oraz maksymalna intensywność treningów, o któej mówi nam średnie i maksymalne tętno, nie ma istotnej różnicy pomiędzy kobietami a mężczyznami. Natomiast pomimo podobnych wartości w tętnach mężczyźni spalają więcej kalorii niżeli kobiety. Różnica może wynikać na przykład przez mase ciała bądź skład mięśniowy ciała.
+::: {style="text-align: justify"}
+Analiza tętna nie wykazuje istotnych różnic między płciami, co świadczy o zbliżonej intensywności treningów u kobiet i mężczyzn. Mimo podobnego obciążenia kardiologicznego, mężczyźni charakteryzują się wyższym wydatkiem energetycznym. Różnica ta wynika z uwarunkowań fizjologicznych – większa masa ciała oraz udział tkanki mięśniowej u mężczyzn generują wyższy koszt kaloryczny przy zachowaniu tego samego poziomu tętna.
+:::
 
-**Pytanie 6: Czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są dobrymi predyktorami efektywności treningu?**
+**Wpływ BMI oraz procentowej zawartości tkanki tłuszczowej na efektywność treningową?**
 
 ```{r}
 dane_calc <- dane_plot %>%
@@ -653,9 +659,11 @@ p1 + p2 +
   )
 ```
 
-Z wykresu efektywności według BMI widać, że tylko dla ludzi, których BMI wskazuje wysoką nadwagę wartość spalanych kalorii się znacząco różni. Może wynikać to z fizycznego kosztu poruszania się większą masą ciała niż reszta. Natomiast z wykresu efektywności według poziomu tkanki tłuszczowej widać, że im mniej procent tłuszczu posiada osoba tym więcej kalorii spala. Wyższa efektywność u osób z mniejszą tkanką tłuszczową sugeruje większy udział masy mięśniowej w treningu.
+::: {style="text-align: justify"}
+Analiza parametrów składu ciała jako predyktorów efektywności treningowej ujawnia istotne różnice między wskaźnikiem BMI a procentową zawartością tkanki tłuszczowej. W przypadku BMI zauważalny wzrost wydatku energetycznego występuje jedynie w grupie z otyłością (751 kcal/h), co wynika bezpośrednio z wysokiego kosztu fizycznego przemieszczania większej masy ciała, podczas gdy dla pozostałych grup różnice są marginalne. Zgoła odmienną tendencję obserwujemy przy analizie poziomu tkanki tłuszczowej, gdzie występuje wyraźna korelacja ujemna – najwyższą efektywność (759 kcal/h) osiągają osoby o sportowej sylwetce. Potwierdza to tezę, że to nie ogólna masa, lecz wysoki udział beztłuszczowej masy mięśniowej jest kluczowym determinantem tempa spalania kalorii, co czyni procent tkanki tłuszczowej znacznie bardziej precyzyjnym wskaźnikiem efektywności treningu niż BMI.
+:::
 
-**Pytanie 7 :Czy częstotliwość ćwiczeń w tygodniu (Workout_Frequency) wpływa na wskaźniki zdrowotne, takie jak BMI czy Resting_BPM?**
+**Wpływ częstotliwości treningów w tygodniu na kluczowe wskaźniki zdrowotne (BMI, Resting_BPM)**
 
 ```{r}
 # 7a. Wpływ częstotliwości na BMI
@@ -685,9 +693,11 @@ ggplot(dane_plot, aes(x = factor(Workout_Frequency), y = Resting_BPM, fill = fac
   theme(legend.position = "none")
 ```
 
-Analiza obu wykresów wykazuje, że wysoka częstotliwość treningów sprzyja stabilizacji kluczowych parametrów zdrowotnych, choć ich mediany pozostają zbliżone we wszystkich grupach. W przypadku wskaźnika BMI oraz tętna spoczynkowego (Resting_BPM) obserwujemy, że osoby trenujące najczęściej (5 razy w tygodniu) charakteryzują się najbardziej przewidywalnymi wynikami – u tych użytkowników rozkład danych jest najwęższy, co oznacza eliminację wartości skrajnych, takich jak wysokie stopnie otyłości czy nietypowo wysokie tętno spoczynkowe. Choć mediana BMI dla wszystkich grup oscyluje w granicach normy (24–25), a tętno spoczynkowe utrzymuje się na stabilnym poziomie ok. 61–63 uderzeń na minutę, to właśnie u osób ćwiczących 5 dni w tygodniu odnotowano najniższe wartości środkowe tętna. Można zatem wnioskować, że regularność treningowa w badanym zbiorze działa przede wszystkim jako czynnik stabilizujący organizm, chroniąc przed wynikami odbiegającymi od normy, natomiast sam wpływ liczby dni treningowych na średnie obniżenie BMI czy tętna jest zauważalny, lecz umiarkowany.
+::: {style="text-align: justify"}
+Analiza wykresów wykazuje, że wysoka częstotliwość treningów (5 sesji/tydz.) pełni przede wszystkim rolę stabilizującą parametry zdrowotne. Chociaż mediany BMI (24–25) i tętna spoczynkowego (ok. 61–63 BPM) są zbliżone we wszystkich grupach, to u osób trenujących najczęściej obserwujemy najmniejszy rozrzut danych i brak wartości skrajnych. Regularność działa więc jako mechanizm ochronny przed otyłością i wysokim tętnem spoczynkowym, przy czym jej bezpośredni wpływ na obniżenie średnich wyników jest zauważalny, lecz umiarkowany..
+:::
 
-**Pytanie 8:Czy w zbiorze danych można wyróżnić wyraźne grupy (klastry) użytkowników o podobnych parametrach fizycznych i treningowych?**
+**Identyfikacja homogenicznych grup (klastrów) użytkowników o zbliżonych profilach fizjologicznych i wzorcach aktywności**
 
 ```{r}
 dane_do_klastrowania <- dane_plot %>% 
@@ -710,9 +720,11 @@ ggplot(dane_plot, aes(x = BMI, y = Fat_Percentage, color = Grupa)) +
   theme(legend.position = "bottom")
 ```
 
-Analiza obu parametrów fizycznych wykazuje, że algorytm klastrowania skutecznie wyodrębnił trzy grupy użytkowników o różnej charakterystyce budowy ciała. Wykres obrazuje silną, liniową zależność między BMI a procentem tkanki tłuszczowej, co pozwala na wyraźny podział populacji siłowni na segmenty. Grupa pierwsza skupia osoby o najniższych parametrach, reprezentujące sylwetki atletyczne lub osoby o niskiej masie ciała. Druga grupa to osoby o średnich, standardowych wartościach, natomiast trzecia grupa obejmuje użytkowników o wyższym BMI i poziomie tłuszczu, którzy mogą stanowić grupę docelową dla treningów redukcyjnych. Zastosowanie tej metody potwierdza, że parametry fizyczne są silnie ze sobą powiązane i pozwalają na automatyczne profilowanie klubowiczów bez konieczności ręcznego przypisywania ich do kategorii.
+::: {style="text-align: justify"}
+Algorytm klastrowania wyodrębnił trzy grupy użytkowników o różnych profilach budowy ciała. Wyraźna korelacja dodatnia między BMI a procentem tkanki tłuszczowej pozwoliła na precyzyjną segmentację: Grupa 2 (niebieska) to osoby o sylwetkach atletycznych, Grupa 3 (zielona) obejmuje użytkowników o standardowej budowie, a Grupa 1 (czerwona) skupia osoby o najwyższych parametrach, będące głównymi kandydatami do programów redukcyjnych. Taki podział umożliwia automatyczną personalizację planów treningowych i ofert bez konieczności ręcznej analizy każdego klienta.
+:::
 
-**Pytanie 9:Które zmienne najbardziej wpływają na średnie tętno podczas treningu (Avg_BPM)?**
+**Analiza czynników determinujących średnie tętno (Avg_BPM) podczas sesji treningowej.**
 
 ```{r}
 dane_kor <- dane_plot %>%
@@ -739,9 +751,11 @@ ggplot(kor_wyniki, aes(x = reorder(Zmienna, Korelacja), y = Korelacja, fill = Ko
   theme(legend.position = "none")
 ```
 
-Analiza współczynników korelacji wykazuje, że średnie tętno podczas treningu jest najsilniej powiązane z tętnem maksymalnym (Max_BPM) oraz liczbą spalonych kalorii (Calories_Burned), co potwierdza bezpośrednią zależność między intensywnością wysiłku a wydatkiem energetycznym organizmu. Wykres obrazuje, że parametry takie jak czas trwania sesji (Session_Duration) również wykazują dodatni związek z tętnem, sugerując, że dłuższe i bardziej intensywne treningi utrzymują serce na wyższych obrotach. Z kolei zmienne demograficzne i fizyczne, takie jak wiek (Age) czy BMI, wykazują znacznie słabszy lub wręcz nieistotny wpływ na średnie tętno w tym zbiorze danych, co pozwala wnioskować, że o intensywności pracy serca na siłowni decyduje przede wszystkim charakter i dynamika samego treningu, a nie cechy budowy ciała czy wiek użytkownika. Całość wyników sugeruje, że monitoring Avg_BPM jest najlepszym wskaźnikiem bieżącego zaangażowania organizmu, niezależnym od stałych parametrów fizjologicznych klubowicza.
+::: {style="text-align: justify"}
+Głównym czynnikiem spalania kalorii jest czas trwania treningu oraz poziom doświadczenia, gdzie osoby zaawansowane osiągają o 80% wyższe wyniki (do 1300 kcal), niezależnie od dyscypliny. Rodzaj aktywności, wiek i BMI mają znikomy wpływ na tętno podczas ćwiczeń, które zależy głównie od dynamiki samej sesji. Mężczyźni, mimo podobnej intensywności tętna co kobiety, spalają więcej energii dzięki większej masie mięśniowej. Wskaźnik tkanki tłuszczowej jest precyzyjniejszym predyktorem wydajności niż BMI, a regularność (5 treningów tygodniowo) kluczowo stabilizuje tętno spoczynkowe i wagę. Automatyczna segmentacja użytkowników pozwala na trafne wyodrębnienie grup atletycznych i redukcyjnych..
+:::
 
-**Pytanie 10:Czy ilość wypitej wody (Water_Intake) ma zauważalny związek z wydajnością treningową (Calories_Burned, Avg_BPM)?**
+**Zależność między ilością spożytej wody a efektywnością spalania kalorii i średnim tętnem?**
 
 ```{r}
 dane_grupy <- dane_plot %>%
@@ -766,15 +780,19 @@ ggplot(dane_grupy, aes(x = Calorie_Group, y = Avg_Water, fill = Avg_Water)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+::: {style="text-align: justify"}
 Analiza wykresu kolumnowego wykazuje bezpośrednią i liniową zależność między wydajnością treningową a nawodnieniem, wskazując, że oba te parametry rosną niemal równolegle. Podział danych na konkretne przedziały energetyczne pozwolił wyeliminować indywidualne odchylenia i ukazać stały trend wzrostowy: podczas gdy osoby spalające do 500 kcal wypijają średnio około 2 litrów wody, w grupach o najwyższej wydajności (powyżej 1750 kcal) średnie spożycie płynów wyraźnie wzrasta, osiągając najwyższe wartości. Taki układ danych jednoznacznie potwierdza, że zapotrzebowanie na wodę jest ściśle skorelowane z objętością wykonanej pracy, co sugeruje, że wyższe spożycie płynów stanowi fizjologiczną konieczność przy sesjach o wysokim wydatku energetycznym.
+:::
 
 # Wnioskowanie statystyczne
 
+::: {style="text-align: justify"}
 W niniejszej części analizy przechodzimy od obserwacji opisowych do formalnego wnioskowania statystycznego. Celem tego etapu jest zweryfikowanie, czy zależności i różnice zaobserwowane w zbiorze danych (obejmującym 973 obserwacje) mają charakter systematyczny, czy też mogą być jedynie wynikiem przypadku. Traktujemy posiadane dane jako próbę, co pozwala nam na wyciąganie wniosków dotyczących szerszej populacji osób podejmujących aktywność fizyczną.
 
 Wnioskowanie statystyczne oparto na integracji metod wizualnych z formalnymi testami statystycznymi, ograniczając ich zakres wyłącznie do postawionych pytań badawczych w celu zachowania przejrzystości analizy.
 
 Przyjęto rygorystyczny poziom istotności alpha = 0,05, stosując jednocześnie korektę wartości p metodą Holma lub Benjamini-Hochberg (BH) w przypadku serii testów wykonywanych w ramach jednego pytania. Procedura ta pozwala na skuteczną kontrolę błędu I rodzaju i minimalizuje ryzyko błędnego uznania przypadkowych różnic za istotne statystycznie.
+:::
 
 ```{r message=FALSE, warning=FALSE}
 alpha <- 0.05
@@ -841,6 +859,7 @@ Wniosek: W analizowanej próbie typ treningu nie wpływa istotnie ani na średni
 
 **Pytanie 4: Experience_Level a kalorie – czy efekt zależy od Workout_Type?**
 
+::: {style="text-align: justify"}
 Cel: Sprawdzić, czy poziom doświadczenia wpływa na liczbę spalonych kalorii oraz czy ten wpływ różni się w zależności od typu treningu.
 
 Metoda: Dopasowano model regresji liniowej z interakcją Experience_Level \* Workout_Type. Następnie wykonano porównania post-hoc poziomów doświadczenia osobno w każdym typie treningu metodą emmeans z korektą BH.
@@ -853,13 +872,17 @@ emmeans(m4, pairwise ~ Experience_Level | Workout_Type, adjust = "BH")
 plot(emmeans(m4, ~ Experience_Level | Workout_Type), comparisons = TRUE)
 ```
 
+::: {style="text-align: justify"}
 Analiza wykazała istotny wpływ poziomu doświadczenia na liczbę spalonych kalorii we wszystkich badanych typach treningu (p\<0,0001). Porównując osoby początkujące, a zaawansowane widać, że największą różnice odnotowano w treningu siłowym, natomiast najmniejszą w cardio. Wyniki pokazują, że poziom doświadczenia jest silnie związany z liczbą spalonych kalorii: osoby bardziej doświadczone spalają istotnie więcej kalorii. Ten wzorzec jest widoczny we wszystkich typach treningu.
+:::
 
 **Pytanie 5: Różnice Kobieta vs Mężczyzna (Avg_BPM, Max_BPM, Calories_Burned)**
 
+::: {style="text-align: justify"}
 Cel: Sprawdzić, czy kobiety i mężczyźni różnią się pod względem średniego tętna w trakcie treningu (Avg_BPM), maksymalnego tętna (Max_BPM) oraz liczby spalonych kalorii (Calories_Burned).
 
 Metoda: Zastosowano test t Welcha dla dwóch niezależnych prób. Ponieważ wykonano trzy testy jednocześnie, uwzględniono korektę wartości p metodą Holma.
+:::
 
 ```{r}
 t_avg <- t.test(Avg_BPM ~ Gender, data = dane_plot)
@@ -873,13 +896,17 @@ p.adjust(c(t_avg$p.value, t_max$p.value, t_cal$p.value), method = "holm")
 
 ```
 
+::: {style="text-align: justify"}
 Analiza wykazała brak istotnych różnic między kobietami i mężczyznami pod względem średniego oraz maksymalnego tętna zarówno przed jak i po uwzględnieniu korekty wartości p metodą Holma. Obie grupy trenowały z podobną intensywnością sercową. Natomiast odnotowano istotną statystycznie różnicę w liczbie spalonych kalorii, która po korekcie wynosiła mniej niż 0,0001. Mężczyźni spalali średnio o 82,2 kcal więcej niż kobiety (944,5 vs 862,3 kcal), co przy braku różnic w tętnie sugeruje wpływ innych czynników, np. różnic w masie ciała lub składzie tkanek.
+:::
 
 **Pytanie 6: Czy BMI i Fat_Percentage przewidują efektywność?**
 
+::: {style="text-align: justify"}
 Cel: Sprawdzić, czy BMI oraz procent tkanki tłuszczowej (Fat_Percentage) są związane z efektywnością treningu zdefiniowaną jako Efficiency = Calories_Burned / Session_Duration.
 
 Metoda: Utworzono zmienną Efficiency, a następnie dopasowano model regresji liniowej wielorakiej: Efficiency \~ BMI + Fat_Percentage.
+:::
 
 ```{r}
 # przygotowanie danych do analizy efektywności
@@ -892,13 +919,17 @@ m6 <- lm(Efficiency ~ BMI + Fat_Percentage, data = dane_calc)
 summary(m6)
 ```
 
+::: {style="text-align: justify"}
 Model regresji liniowej wykazał, że zarówno BMI, jak i procentowa zawartość tkanki tłuszczowej są istotnymi predyktorami efektywności spalania kalorii. Odnotowano przeciwstawne kierunki tych zależności: wyższe BMI sprzyja większemu wydatkowi energetycznemu (wzrost o 1,85 kcal/min na jednostkę BMI), natomiast wyższy poziom tkanki tłuszczowej obniża tę efektywność (spadek o 2,15 kcal/min na każdy 1% tłuszczu). Niska wartość skorygowanego współczynnika determinacji sugeruje jednak, że budowa ciała wyjaśnia jedynie niewielką część całkowitej zmienności tempa spalania kalorii.
+:::
 
 **Pytanie 7: Czy Workout_Frequency wpływa na BMI i Resting_BPM?**
 
+::: {style="text-align: justify"}
 Cel: Sprawdzić, czy częstotliwość treningów w tygodniu (Workout_Frequency) wiąże się z różnicami w BMI oraz tętnie spoczynkowym (Resting_BPM).
 
 Metoda: Zastosowano jednoczynnikową analizę wariancji Welcha (ANOVA Welcha), traktując Workout_Frequency jako zmienną grupującą (kategorie).
+:::
 
 ```{r}
 test_bmi1 <- oneway.test(BMI ~ factor(Workout_Frequency), data = dane_plot)
@@ -910,13 +941,17 @@ p_values <- c(test_bmi1$p.value, test_bpm1$p.value)
 p.adjust(p_values, method = "holm")
 ```
 
+::: {style="text-align: justify"}
 Analiza ANOVA Welcha nie wskazała istotnych różnic wskaźnika BMI (p=0,544) oraz tętna spoczynkowego (p=0,979) w zależności od częstotliwości treningów w tygodniu. Po zastosowaniu korekty Holma, oba wyniki osiągnęły wartość równą 1, co potwierdza brak istotności statystycznej obu zmiennych.
+:::
 
 **Pytanie 8: Segmentacja (k-średnich) – czy klastry różnią się czymś więcej?**
 
+::: {style="text-align: justify"}
 Cel: Podział badanej populacji na grupy na podstawie parametrów budowy ciała (BMI oraz % tkanki tłuszczowej) i sprawdzenie, czy te grupy różnią się między sobą pod względem innych cech demograficznych, wydolnościowych i treningowych.
 
 Metoda: Algorytm k-średnich (k=3) na ustandaryzowanych danych. Zbadanie zmiennych ilościowych testem ANOVA Welcha z korektą Holma dla wielokrotnych porównań. W przypadku zmiennych jakościowych wykorzystanie testu niezależności chi-kwadrat.
+:::
 
 ```{r}
 {r}
@@ -938,13 +973,17 @@ sapply(c("Gender","Workout_Type","Experience_Level"),
        \(v) chisq.test(table(dane_plot$Grupa, dane_plot[[v]]))$p.value)
 ```
 
+::: {style="text-align: justify"}
 Segmentacja wykazała, że osoby o najniższym BMI i poziomie tkanki tłuszczowej (Grupa 2) są jednocześnie najbardziej aktywne, wykonując średnio ponad 4 treningi tygodniowo i spalając o ok. 50% więcej kalorii niż pozostałe grupy. Mimo znaczących różnic w sylwetce i intensywności ćwiczeń (p\_{holm} \< 0,05), parametry tętna spoczynkowego oraz wiek badanych pozostają niemal identyczne we wszystkich klastrach. Analiza struktury grup potwierdza, że na profil budowy ciała silnie wpływa płeć oraz staż treningowy, natomiast sam rodzaj wybranej aktywności (np. Cardio vs Strength) nie różnicuje istotnie wydzielonych segmentów.
+:::
 
 **Pytanie 9: Co najbardziej wpływa na Avg_BPM?**
 
+::: {style="text-align: justify"}
 Cel: Sprawdzić, które cechy użytkownika i treningu są statystycznie związane ze średnim tętnem podczas treningu (Avg_BPM), przy jednoczesnej kontroli pozostałych zmiennych.
 
 Metoda: Zastosowano regresję liniową wieloraką, uwzględniając jednocześnie parametry treningowe i fizyczne (m.in. czas trwania, kalorie, wiek, BMI, płeć, typ treningu).
+:::
 
 ```{r}
 m9 <- lm(
@@ -958,13 +997,17 @@ summary(m9)
 car::vif(m9)
 ```
 
+::: {style="text-align: justify"}
 Głównymi determinantami średniego tętna są czas trwania sesji, spalone kalorie oraz wiek, które wykazują bardzo wysoką istotność statystyczną (p \< 2e-16). Model wyjaśnia aż 80% zmienności, przy czym bycie mężczyzną wiąże się ze znaczącym spadkiem średniego tętna (o ok. 11,5 uderzeń na minutę) w porównaniu do kobiet, przy zachowaniu pozostałych parametrów na stałym poziomie. Co istotne, czynniki takie jak BMI, częstotliwość treningów czy poziom doświadczenia nie mają statystycznie istotnego wpływu na wartość Avg_BPM w tym modelu.
+:::
 
 **Pytanie 10: Czy Water_Intake ma związek z wydajnością?**
 
+::: {style="text-align: justify"}
 Cel: Sprawdzić, czy ilość wypijanej wody (Water_Intake) jest związana ze spalonymi kaloriami (Calories_Burned) oraz ze średnim tętnem (Avg_BPM). Dodatkowo oceniono, czy związek z kaloriami utrzymuje się po uwzględnieniu czasu trwania treningu i typu treningu.
 
 Metoda: Zastosowano korelację rang Spearmana (dla prostych zależności) oraz regresję liniową Calories_Burned \~ Water_Intake + Session_Duration + Workout_Type w celu kontroli czasu i typu treningu.
+:::
 
 ```{r}
 cor.test(dane_plot$Water_Intake, dane_plot$Calories_Burned, method = "spearman", exact = FALSE)
@@ -975,4 +1018,6 @@ summary(m10)
 
 ```
 
+::: {style="text-align: justify"}
 Ilość wypijanej wody jest silnie powiązana z większym wydatkiem energetycznym – każda dodatkowa jednostka nawodnienia wiąże się ze wzrostem spalonych kalorii o około 49 kcal. Zależność ta pozostaje statystycznie bardzo istotna (p \< 0,001) nawet przy uwzględnieniu czasu trwania i typu treningu. Jednocześnie badania nie wykazały żadnego istotnego związku między spożyciem wody a średnim tętnem podczas ćwiczeń (p = 0,858). Oznacza to, że nawodnienie sprzyja efektywności spalania kalorii, nie wpływając bezpośrednio na intensywność pracy serca.
+:::
