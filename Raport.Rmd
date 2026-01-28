@@ -219,7 +219,7 @@ barplot(cf, main = "dane")
 ```
 
 ::: {style="text-align: justify"}
-Wykres przedstawia zbiorcze wyniki konfrontacji zbioru danych z dwunastoma zdefiniowanymi regułami logicznymi. Pozwala on na błyskawiczną ocenę kondycji merytorycznej danych po procesie czyszczenia i imputacji. Z wykresu wynika, że nie wszystkie obserwacje spełniają regułę Avg_BPM \< Max_BPM, co oznacza, że w niektórych przypadkach średnie tętno jest wyższe od maksymalnego. Poniżej przedstawione jest szczegółowe zestawienie błędnych rekordów.
+Wykres przedstawia zbiorcze wyniki konfrontacji zbioru danych z dwunastoma zdefiniowanymi regułami logicznymi. Pozwala on na błyskawiczną ocenę kondycji merytorycznej danych po procesie czyszczenia i imputacji. Z wykresu wynika, że nie wszystkie obserwacje spełniają regułę Avg_BPM < Max_BPM, co oznacza, że w niektórych przypadkach średnie tętno jest wyższe od maksymalnego. Poniżej przedstawione jest szczegółowe zestawienie błędnych rekordów.
 :::
 
 ```{r echo=FALSE}
@@ -240,7 +240,7 @@ Jak wykazano w powyższej tabeli, w skrajnych przypadkach średnie tętno przewy
 ## Naprawa danych
 
 ::: {style="text-align: justify"}
-W celu wykonania dalszej analizy  należy naprawić dane, które nie spełniały wcześniej ustalonych reguł. Przyjęto założenie, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwilowego braku odczytu w momencie faktycznego maksimum), natomiast średnie tętno jest bardziej stabilne i wiarygodne. Dlatego zdecydowano skorygować wyłącznie maksymalne tętno. Dla wszystkich obserwacji, w których średnie tętno było większe lub równe maksymalnego, zwiększono maksymalne o 1 uderzenie na minutę względem wartości średniej. Zmiana ta jest bardzo niewielka, nie wpływa istotnie na rozkład zmiennej, a jednocześnie przywraca logiczną relację pomiędzy średnim i maksymalnym tętnem. Aby być pewnym, że dane zostały poprawione, ponownie sprawdzono zgodność danych z regułami, co zostało przedstawione na poniższym wykresie.
+W celu wykonania dalszej analizy  należało naprawić dane, które nie spełniały wcześniej ustalonych reguł. Przyjęto założenie, że błąd wynika z niedoszacowania wartości Max_BPM (np. chwilowego braku odczytu w momencie faktycznego maksimum), natomiast średnie tętno jest bardziej stabilne i wiarygodne. Dlatego zdecydowano skorygować wyłącznie maksymalne tętno. Dla wszystkich obserwacji, w których średnie tętno było większe lub równe maksymalnego, zwiększono maksymalne o 1 uderzenie na minutę względem wartości średniej. Zmiana ta jest bardzo niewielka, nie wpływa istotnie na rozkład zmiennej, a jednocześnie przywraca logiczną relację pomiędzy średnim i maksymalnym tętnem. Aby być pewnym, że dane zostały poprawione, ponownie sprawdzono zgodność danych z regułami, co zostało przedstawione na poniższym wykresie.
 :::
 
 ```{r echo=FALSE}
@@ -261,6 +261,12 @@ Wyniki przedstawione na powyższym wykresie potwierdzają, że proces naprawczy 
 
 
 # Analiza opisowa
+
+::: {style="text-align: justify"}
+
+Kolejnym etapem było przeprowadzenie analizy opisowej, mającej na celu scharakteryzowanie zbioru danych pod kątem podstawowych statystyk oraz rozkładów zmiennych. Analiza ta pozwala zrozumieć strukturę danych oraz dokonać wstępnej oceny porównawczej badanych parametrów.
+
+:::
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 # Ujednolicenie nazw i etykiet do tabel i wykresów
@@ -300,7 +306,6 @@ glimpse(dane_desc)
 
 Analiza opisowa została przeprowadzona na zbiorze danych obejmującym N = 973 obserwacje, gdzie każda obserwacja odpowiada pojedynczej sesji treningowej. Zbiór zawiera informacje opisujące zarówno cechy demograficzne i antropometryczne uczestników (m.in. wiek, płeć, masa ciała, wzrost, wskaźnik BMI), jak i parametry związane z przebiegiem treningu oraz reakcją organizmu (czas trwania sesji, spalone kalorie, typ treningu, poziom nawodnienia, częstotliwość treningów w tygodniu, poziom doświadczenia, a także wybrane wskaźniki tętna).
 
-W ramach analizy wstępnej sprawdzono kompletność danych. W zbiorze występują braki dla części zmiennych, dlatego w dalszych opisach (np. w tabelach lub na wykresach) liczebność N może różnić się pomiędzy zmiennymi — w takich przypadkach podawana jest liczba obserwacji dostępnych dla danej cechy.
 :::
 
 ```{r echo=FALSE}
@@ -354,7 +359,7 @@ freq_tbl(dane_desc$Experience_Level)
 ```
 
 ::: {style="text-align: justify"}
-**Struktura próby – zmienne jakościowe (częstości)**
+**Struktura próby – zmienne jakościowe**
 
 W tej części przedstawiono rozkłady częstości dla zmiennych jakościowych: płeć (Gender), typ treningu (Workout_Type) oraz poziom doświadczenia (Experience_Level). Analiza dotyczy pełnej próby n = 973 obserwacji (po imputacji i korekcie danych).
 
@@ -397,21 +402,6 @@ Rozkład spalonych kalorii również ma jeden główny szczyt i jest lekko skoś
 Podsumowując, spośród analizowanych zmiennych większą asymetrię i obecność wartości skrajnych obserwuje się dla BMI oraz spalonych kalorii, natomiast wiek ma rozkład bardziej równomierny.
 :::
 
-**Porównanie spalonych kalorii między typami treningu**
-
-```{r echo=FALSE}
-
-# Porównanie spalonych kalorii między typami treningu
-
-  ggplot(dane_desc, aes(x = Workout_Type, y = Calories_Burned)) +
-geom_boxplot() +
-labs(x = "Typ treningu", y = "Spalone kalorie")
-```
-
-::: {style="text-align: justify"}
-Wykres pudełkowy przedstawia rozkład spalonych kalorii w zależności od typu treningu (Cardio, Siłowy, Joga, HIIT). Widoczne jest duże nakładanie się rozkładów pomiędzy grupami, co sugeruje, że różnice między typami treningu są niewielkie w porównaniu do zróżnicowania wewnątrz grup. Mediany są zbliżone, przy czym HIIT osiąga nieco wyższe wartości centralne niż pozostałe kategorie, natomiast Cardio i trening siłowy prezentują bardzo podobny poziom spalonych kalorii. Największą zmienność wyników obserwuje się dla jogi, gdzie rozstęp wartości jest relatywnie szerszy. Dodatkowo we wszystkich typach treningu występują pojedyncze wysokie wartości odstające, co wskazuje, że niezależnie od kategorii zdarzają się sesje o wyjątkowo dużym wydatku energetycznym. Ogólnie wykres sugeruje, że ewentualny wpływ typu treningu na liczbę spalonych kalorii jest ograniczony, a kluczowe różnice wynikają raczej z indywidualnego przebiegu sesji.
-:::
-
 **Najsilniejsze korelacje między zmiennymi liczbowymi**
 
 ```{r echo=FALSE}
@@ -432,7 +422,7 @@ cor_top10
 ```
 
 ::: {style="text-align: justify"}
-W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi (współczynnik korelacji Pearsona). Wartości dodatnie oznaczają współwystępowanie wzrostu obu zmiennych, a ujemne — wzrost jednej zmiennej przy spadku drugiej. Korelacje mają charakter opisowy i nie przesądzają o zależnościach przyczynowo-skutkowych.
+W tabeli przedstawiono 10 najsilniejszych zależności liniowych między zmiennymi liczbowymi (współczynnik korelacji Pearsona). Wartości dodatnie oznaczają współwystępowanie wzrostu obu zmiennych, a ujemne - wzrost jednej zmiennej przy spadku drugiej. Korelacje mają charakter opisowy i nie przesądzają o zależnościach przyczynowo-skutkowych.
 
 Najsilniejszą dodatnią korelację zaobserwowano między Calories_Burned a Session_Duration (r = 0,908), co wskazuje na ścisły związek pomiędzy czasem trwania sesji a wydatkiem energetycznym. Wysoka korelacja występuje również między BMI a Weight (r = 0,853), zgodnie z konstrukcją wskaźnika BMI.
 
@@ -578,7 +568,7 @@ Analiza średniego wydatku energetycznego w zależności od poziomu doświadczen
 
 **Wpływ płci na intensywność wysiłku fizycznego oraz poziom wydatku energetycznego.**
 
-```{r}
+```{r echo=FALSE}
 
 # Średnie tętno (Avf_BPM) wg płci
 
@@ -594,9 +584,9 @@ ggplot(dane_plot, aes(x = Gender, y = Avg_BPM, fill = Gender)) +
 ggplot(dane_plot, aes(x = Gender, y = Max_BPM, fill = Gender)) +
   geom_boxplot() +
   labs(
-    title = "Różnice w Maksymalnym Tętnie (Max_BPM) między Płciami",
+    title = "Różnice w Maksymalnym Tętnie między Płciami",
     x = "Płeć",
-    y = "Maksymalne Tętno (Max_BPM)"
+    y = "Maksymalne Tętno"
   ) +
   theme_minimal() +
   theme(legend.position = "none")
@@ -606,9 +596,9 @@ ggplot(dane_plot, aes(x = Gender, y = Max_BPM, fill = Gender)) +
 ggplot(dane_plot, aes(x = Gender, y = Calories_Burned, fill = Gender)) +
   geom_boxplot() +
   labs(
-    title = "Różnice w Spalonych Kaloriach (Calories_Burned) między Płciami",
+    title = "Różnice w Spalonych Kaloriach między Płciami",
     x = "Płeć",
-    y = "Spalone Kalorie (Calories_Burned)"
+    y = "Spalone Kalorie"
   ) +
   theme_minimal() +
   theme(legend.position = "none")
@@ -618,9 +608,9 @@ ggplot(dane_plot, aes(x = Gender, y = Calories_Burned, fill = Gender)) +
 Analiza tętna nie wykazuje istotnych różnic między płciami, co świadczy o zbliżonej intensywności treningów u kobiet i mężczyzn. Mimo podobnego obciążenia kardiologicznego, mężczyźni charakteryzują się wyższym wydatkiem energetycznym. Różnica ta wynika z uwarunkowań fizjologicznych – większa masa ciała oraz udział tkanki mięśniowej u mężczyzn generują wyższy koszt kaloryczny przy zachowaniu tego samego poziomu tętna.
 :::
 
-**Wpływ BMI oraz procentowej zawartości tkanki tłuszczowej na efektywność treningową?**
+**Wpływ BMI oraz procentowej zawartości tkanki tłuszczowej na efektywność treningową**
 
-```{r}
+```{r echo=FALSE}
 dane_calc <- dane_plot %>%
   mutate(
     Efficiency = Calories_Burned / Session_Duration,
@@ -694,7 +684,7 @@ ggplot(dane_plot, aes(x = factor(Workout_Frequency), y = Resting_BPM, fill = fac
 ```
 
 ::: {style="text-align: justify"}
-Analiza wykresów wykazuje, że wysoka częstotliwość treningów (5 sesji/tydz.) pełni przede wszystkim rolę stabilizującą parametry zdrowotne. Chociaż mediany BMI (24–25) i tętna spoczynkowego (ok. 61–63 BPM) są zbliżone we wszystkich grupach, to u osób trenujących najczęściej obserwujemy najmniejszy rozrzut danych i brak wartości skrajnych. Regularność działa więc jako mechanizm ochronny przed otyłością i wysokim tętnem spoczynkowym, przy czym jej bezpośredni wpływ na obniżenie średnich wyników jest zauważalny, lecz umiarkowany..
+Analiza wykresów wykazuje, że wysoka częstotliwość treningów (5 sesji/tydz.) pełni przede wszystkim rolę stabilizującą parametry zdrowotne. W przypadku BMI, u osób trenujących najczęściej obserwujemy najwyższy stopień koncentracji wyników wokół mediany oraz wyraźne ograniczenie występowania wartości bardzo wysokich (powyżej 35 BMI), co sugeruje, że wysoka regularność sprzyja utrzymaniu stabilnej masy ciała. Chociaż mediany BMI (ok. 24–25) oraz tętna spoczynkowego (ok. 61–63 BPM) pozostają zbliżone we wszystkich grupach, to właśnie w grupie o najwyższej aktywności rozkład BMI jest najbardziej zwarty. Regularność działa więc jako mechanizm ograniczający zmienność parametrów zdrowotnych, przy czym jej bezpośredni wpływ na obniżenie wartości przeciętnych jest obecny, lecz ma charakter umiarkowany.
 :::
 
 **Identyfikacja homogenicznych grup (klastrów) użytkowników o zbliżonych profilach fizjologicznych i wzorcach aktywności**
@@ -806,7 +796,7 @@ Metoda: Dopasowano model regresji liniowej z interakcją Session_Duration (h) \*
 
 ```{r}
 
-# Model z interakcją: czy nachylenie zależy od typu treningu?
+# Model z interakcją
 m1 <- lm(Calories_Burned ~ Session_Duration * Workout_Type, data = dane_plot)
 car::Anova(m1, type = 2)
 
@@ -816,11 +806,8 @@ summary(m1_simpler)
 
 ```
 
-Wyniki: Czas trwania treningu miał istotny wpływ na liczbę spalonych kalorii (F(1,965)=4539.24, p\<0.001). Nie stwierdzono natomiast istotnej interakcji między czasem a typem treningu (F(3,965)=0.91, p=0.435), co oznacza, że nachylenie zależności jest podobne dla wszystkich typów treningu. Sam typ treningu również nie był istotny (F(3,965)=0.21, p=0.886).
+Analiza regresji liniowej potwierdziła, że głównym czynnikiem determinującym liczbę spalonych kalorii jest czas trwania sesji (p < 0,001). Statystycznie nie stwierdzono istotnego wpływu rodzaju treningu ani jego interakcji z czasem trwania, co oznacza, że tempo spalania kalorii jest zbliżone dla wszystkich dyscyplin. Model uproszczony charakteryzował się wysokim dopasowaniem (R^2 = 0,825) i wskazał, że każda dodatkowa godzina ćwiczeń zwiększa wydatek energetyczny średnio o 722 kcal (ok. 12 kcal/min). Wniosek ten pozwala uznać czas trwania treningu za uniwersalny i najdokładniejszy miernik efektywności energetycznej w badanym zbiorze.
 
-Model uproszczony: W związku z brakiem interakcji dopasowano model bez interakcji. Współczynnik przy Session_Duration wyniósł 722.34, co oznacza wzrost spalonych kalorii średnio o ok. 722 kcal na dodatkową godzinę treningu (≈ 12 kcal na minutę). Model dobrze dopasowywał dane (R² = 0.825).
-
-Wniosek: Liczba spalonych kalorii rośnie wyraźnie wraz z czasem trwania treningu, a typ treningu nie zmienia istotnie tej zależności.
 
 **Pytanie 2: Wiek a tętno spoczynkowe**
 
@@ -833,9 +820,7 @@ cor.test(dane_plot$Age, dane_plot$Resting_BPM, method = "spearman")
 
 ```
 
-Wyniki: Nie stwierdzono istotnej zależności między wiekiem a tętnem spoczynkowym (rho = -0.007, p = 0.826). Wartość współczynnika jest bliska zeru, co wskazuje na brak związku również w sensie praktycznym.
-
-Wniosek: W analizowanej próbie wiek nie wiąże się istotnie z tętnem spoczynkowym.
+Analiza korelacji rang Spearmana wykazała brak istotnej zależności między wiekiem a tętnem spoczynkowym. Uzyskany współczynnik bliski zeru jednoznacznie wskazuje na brak związku między tymi zmiennymi, co potwierdza, że w badanym zbiorze wiek nie jest predyktorem tętna spoczynkowego. Większa zmienność parametru występuje raczej między poszczególnymi osobami wewnątrz grup niż pomiędzy różnymi kohortami wiekowymi.
 
 **Pytanie 3: Czy rodzaj treningu wpływa na Avg_BPM i Calories_Burned?**
 
@@ -849,13 +834,7 @@ oneway.test(Avg_BPM ~ Workout_Type, data = dane_plot)
 oneway.test(Calories_Burned ~ Workout_Type, data = dane_plot)
 ```
 
-Wyniki:
-
-Dla Avg_BPM nie stwierdzono istotnych różnic między typami treningu (F(3, 531.71)=0.094, p=0.964).
-
-Dla Calories_Burned również nie stwierdzono istotnych różnic (F(3, 533.12)=1.049, p=0.371).
-
-Wniosek: W analizowanej próbie typ treningu nie wpływa istotnie ani na średnie tętno w trakcie treningu (Avg_BPM), ani na liczbę spalonych kalorii (Calories_Burned).
+Przeprowadzona analiza testem ANOVA Welcha nie dostarczyła dowodów na istnienie istotnych różnic w średnim tętnie oraz liczbie spalonych kalorii pomiędzy analizowanymi typami treningów ($p > 0.05$ dla obu zmiennych). Oznacza to, że niezależnie od wybranej formy aktywności – czy był to trening HIIT, siłowy, joga czy cardio – średnie obciążenie organizmu i wydatek energetyczny pozostawały na zbliżonym poziomie. Sugeruje to, że o intensywności treningu w tej grupie decydowały czynniki inne niż sam rodzaj wybranej aktywności fizycznej.
 
 **Pytanie 4: Experience_Level a kalorie – czy efekt zależy od Workout_Type?**
 
