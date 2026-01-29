@@ -60,7 +60,7 @@ W projekcie został wykorzystany zbiór danych obejmujący 973 rekordy dotycząc
 :::
 
 | Nazwa zmiennej | Opis zmiennej |
-|:-----------------------------------|:-----------------------------------|
+|:---|:---|
 | **Wiek** | Wiek uczestnika badania w latach |
 | **Płeć** | Płeć uczestnika badania (Mężczyzna/Kobieta) |
 | **Waga (kg)** | Masa ciała w kilogramach |
