@@ -50,7 +50,7 @@ dane <- read_csv("dane/silownia_new.csv")
 # Wstęp
 
 ::: {style="text-align: justify"}
-Celem projektu zespołowego realizowanego w roku akademickim 2025/2026 była analiza danych dotyczących aktywności użytkowników siłowni, obejmująca zarówno ich charakterystyki demograficzne, jak i wskaźniki związane z wydajnością treningową. Projekt miał na celu zrozumienie, jakie czynniki wpływają na efektywność ćwiczeń oraz jakie wzorce zachowań można zaobserwować wśród osób regularnie korzystających z siłowni.
+Celem projektu zespołowego realizowanego w roku akademickim 2025/2026 była analiza danych dotyczących aktywności użytkowników siłowni, obejmująca zarówno ich charakterystyki demograficzne, jak i biologiczne oraz wskaźniki związane z wydajnością treningową. Projekt miał na celu zrozumienie, jakie czynniki wpływają na efektywność ćwiczeń oraz jakie wzorce zachowań można zaobserwować wśród osób regularnie korzystających z siłowni.
 :::
 
 ## Opis danych
